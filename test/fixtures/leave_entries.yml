@@ -1,0 +1,11 @@
+# Leave entries fixtures
+alice_vacation:
+  person: alice
+  date: 2026-06-15
+  half_day: "none"
+
+bob_vacation:
+  person: bob
+  date: 2026-06-16
+  half_day: "morning"
+

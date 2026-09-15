@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <title><%= content_for(:title) || "Annual Leave Planner" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Annual Leave Planner">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= content_for(:head) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag "pico.min", "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header class="site-nav">
+      <div class="container">
+        <a href="<%= root_path %>" class="site-logo">
+          <span>🗓️</span> <strong>Annual Leave Planner</strong>
+        </a>
+        <nav>
+          <ul class="nav-links">
+            <li><%= link_to "📅 12-Month Calendar", root_path, class: (controller_name == "calendar" ? "active" : "") %></li>
+            <li><%= link_to "👥 People & Allowances", people_path, class: (controller_name == "people" ? "active" : "") %></li>
+            <li><%= link_to "🎒 School Holidays", school_holidays_path, class: (controller_name == "school_holidays" ? "active" : "") %></li>
+            <li><%= link_to "🇬🇧 Bank Holidays", bank_holidays_path, class: (controller_name == "bank_holidays" ? "active" : "") %></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="<%= controller_name == 'calendar' ? 'container-fluid' : 'container' %>" style="<%= controller_name == 'calendar' ? 'padding: 0 1.5rem;' : '' %>">
+      <% if notice %>
+        <div class="flash-message">
+          <span><%= notice %></span>
+          <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: inherit; font-size: 1.25rem; cursor: pointer; padding: 0 0.5rem; line-height: 1;">&times;</button>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div class="flash-message" style="background-color: #fef2f2; border-color: #ef4444; color: #991b1b;">
+          <span><%= alert %></span>
+          <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; color: inherit; font-size: 1.25rem; cursor: pointer; padding: 0 0.5rem; line-height: 1;">&times;</button>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+
+    <turbo-frame id="modal_frame"></turbo-frame>
+  </body>
+</html>
+

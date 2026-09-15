@@ -1,0 +1,2 @@
+module LeaveEntriesHelper
+end

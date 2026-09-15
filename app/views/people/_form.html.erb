@@ -1,0 +1,95 @@
+<%= form_with(model: person, local: true) do |f| %>
+  <% if person.errors.any? %>
+    <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+      <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h4>
+      <ul>
+        <% person.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </article>
+  <% end %>
+
+  <div class="grid">
+    <div>
+      <%= f.label :name, "Name" %>
+      <%= f.text_field :name, required: true, placeholder: "e.g. Chris" %>
+    </div>
+    <div>
+      <%= f.label :color, "Calendar Badge Color" %>
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <%= f.color_field :color, style: "height: 2.75rem; width: 4rem; padding: 0.2rem; cursor: pointer;" %>
+        <%= f.text_field :color, placeholder: "#2563eb", style: "flex: 1;" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top: 1rem;">
+    <div>
+      <%= f.label :allowance_unit, "Allowance Unit" %>
+      <%= f.select :allowance_unit, [["Days (e.g. 25 days)", "days"], ["Hours (e.g. 187.5 hours)", "hours"]], {}, id: "person_allowance_unit" %>
+    </div>
+    <div>
+      <%= f.label :allowance_amount, "Annual Allowance Amount" %>
+      <%= f.number_field :allowance_amount, step: 0.25, min: 0, required: true %>
+      <small style="color: var(--pico-muted-color);">Total annual leave entitlement.</small>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top: 1rem;">
+    <div>
+      <%= f.label :hours_per_day, "Standard Working Hours Per Day" %>
+      <%= f.number_field :hours_per_day, step: 0.25, min: 1, max: 24, required: true %>
+      <small style="color: var(--pico-muted-color);">Used when calculating hours per day (default 7.5 hrs).</small>
+    </div>
+    <div>
+      <label>Leave Year Reset Date</label>
+      <div style="display: flex; gap: 0.5rem;">
+        <div style="flex: 1;">
+          <%= f.select :leave_year_start_day, (1..31).map { |d| ["#{d.ordinalize}", d] }, { selected: person.leave_year_start_day || 1 }, aria: { label: "Reset Day" } %>
+        </div>
+        <div style="flex: 2;">
+          <%= f.select :leave_year_start_month, (1..12).map { |m| [Date::MONTHNAMES[m], m] }, { selected: person.leave_year_start_month || 1 }, aria: { label: "Reset Month" } %>
+        </div>
+      </div>
+      <small style="color: var(--pico-muted-color);">Specific day and month when annual leave entitlement resets.</small>
+    </div>
+  </div>
+
+  <div style="margin-top: 1.5rem; padding: 1rem; border: 1px solid var(--pico-muted-border-color, #e2e8f0); border-radius: 6px; background-color: #f8fafc;">
+    <h4 style="margin-bottom: 0.25rem; font-size: 1rem;">Mid-Year Starting Balance (Optional)</h4>
+    <p style="margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--pico-muted-color);">
+      Starting to use the planner mid-year? Set your currently remaining leave balance and effective date so you don't have to enter past leave. Only leave booked on or after this date will be deducted. When your leave year resets, your full annual entitlement will automatically take over.
+    </p>
+    <div class="grid">
+      <div>
+        <%= f.label :initial_remaining_allowance, "Current Remaining Balance" %>
+        <%= f.number_field :initial_remaining_allowance, step: 0.25, min: 0, placeholder: "e.g. 10.0" %>
+        <small style="color: var(--pico-muted-color);">Leave blank to use full annual allowance.</small>
+      </div>
+      <div>
+        <%= f.label :initial_allowance_date, "Effective From Date" %>
+        <%= f.date_field :initial_allowance_date %>
+        <small style="color: var(--pico-muted-color);">Date this balance was active (defaults to today).</small>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 1.5rem; padding: 1rem; border: 1px solid var(--pico-muted-border-color, #e2e8f0); border-radius: 6px;">
+    <fieldset>
+      <label>
+        <%= f.check_box :include_bank_holidays %>
+        <strong>Include Bank Holidays in Allowance</strong>
+      </label>
+      <p style="margin: 0.25rem 0 0 1.75rem; font-size: 0.875rem; color: var(--pico-muted-color);">
+        When unchecked (default), UK bank holidays are excluded from allowance (they are free non-working days).<br>
+        When checked, bank holidays are included in the allowance pot and must be booked off out of the allowance.
+      </p>
+    </fieldset>
+  </div>
+
+  <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+    <%= f.submit person.new_record? ? "Create Person" : "Save Changes", class: "contrast" %>
+    <%= link_to "Cancel", people_path, role: "button", class: "secondary outline" %>
+  </div>
+<% end %>

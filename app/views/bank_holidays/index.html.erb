@@ -1,0 +1,54 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h2 style="margin-bottom: 0.25rem;">UK Bank Holidays</h2>
+    <p style="color: var(--pico-muted-color); margin-bottom: 0;">Official UK public and bank holidays.</p>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
+    <%= button_to "Sync from GOV.UK", sync_bank_holidays_path, method: :post, class: "secondary outline" %>
+  </div>
+</div>
+
+<div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap;">
+  <div style="display: flex; gap: 0.5rem; align-items: center;">
+    <strong>Year:</strong>
+    <% (-1..2).each do |offset| %>
+      <% y = Date.current.year + offset %>
+      <%= link_to y, bank_holidays_path(year: y, division: @division), role: "button", class: (@year == y ? "contrast" : "outline secondary"), style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+    <% end %>
+  </div>
+  <div style="display: flex; gap: 0.5rem; align-items: center; margin-left: auto;">
+    <strong>Region:</strong>
+    <%= link_to "England & Wales", bank_holidays_path(year: @year, division: "england-and-wales"), role: "button", class: (@division == "england-and-wales" ? "contrast" : "outline secondary"), style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+    <%= link_to "Scotland", bank_holidays_path(year: @year, division: "scotland"), role: "button", class: (@division == "scotland" ? "contrast" : "outline secondary"), style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+    <%= link_to "Northern Ireland", bank_holidays_path(year: @year, division: "northern-ireland"), role: "button", class: (@division == "northern-ireland" ? "contrast" : "outline secondary"), style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+  </div>
+</div>
+
+<% if @bank_holidays.empty? %>
+  <article style="text-align: center; padding: 3rem 1rem;">
+    <h3>No bank holidays found for <%= @year %></h3>
+    <p>Click "Sync from GOV.UK" to update the bank holidays database.</p>
+  </article>
+<% else %>
+  <table role="grid">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Holiday</th>
+        <th>Day of Week</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @bank_holidays.each do |bh| %>
+        <tr>
+          <td><strong><%= bh.date.strftime("%-d %B %Y") %></strong></td>
+          <td><%= bh.title %></td>
+          <td><%= bh.date.strftime("%A") %></td>
+          <td><%= bh.notes.presence || "-" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+

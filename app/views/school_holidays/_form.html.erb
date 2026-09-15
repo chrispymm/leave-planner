@@ -1,0 +1,47 @@
+<%= form_with(model: school_holiday, local: true) do |f| %>
+  <% if school_holiday.errors.any? %>
+    <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+      <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(school_holiday.errors.count, "error") %> prohibited this holiday from being saved:</h4>
+      <ul>
+        <% school_holiday.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </article>
+  <% end %>
+
+  <div>
+    <%= f.label :title, "Holiday Name / Description" %>
+    <%= f.text_field :title, required: true, placeholder: "e.g. Summer Holidays 2026 or October Half Term" %>
+  </div>
+
+  <div class="grid" style="margin-top: 1rem;">
+    <div>
+      <%= f.label :start_date, "Start Date" %>
+      <%= f.date_field :start_date, required: true %>
+    </div>
+    <div>
+      <%= f.label :end_date, "End Date" %>
+      <%= f.date_field :end_date, required: true %>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top: 1rem;">
+    <div>
+      <%= f.label :color, "Highlight Band Color" %>
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <%= f.color_field :color, style: "height: 2.75rem; width: 4rem; padding: 0.2rem; cursor: pointer;" %>
+        <%= f.text_field :color, placeholder: "#f59e0b", style: "flex: 1;" %>
+      </div>
+    </div>
+    <div>
+      <%= f.label :notes, "Notes (Optional)" %>
+      <%= f.text_field :notes, placeholder: "e.g. Inset day on first Monday" %>
+    </div>
+  </div>
+
+  <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+    <%= f.submit school_holiday.new_record? ? "Add School Holiday" : "Save Holiday", class: "contrast" %>
+    <%= link_to "Cancel", school_holidays_path, role: "button", class: "secondary outline" %>
+  </div>
+<% end %>

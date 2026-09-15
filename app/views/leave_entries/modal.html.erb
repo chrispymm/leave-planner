@@ -1,0 +1,81 @@
+<turbo-frame id="modal_frame">
+  <dialog open data-controller="modal" data-action="click->modal#clickOutside" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.45); display: flex; align-items: center; justify-content: center; z-index: 999; border: none; padding: 1rem; margin: 0; box-sizing: border-box;">
+    <article style="background: var(--pico-card-background-color, #ffffff); border-radius: 8px; width: 100%; max-width: 520px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); padding: 1.5rem; position: relative;">
+      <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color, #e2e8f0); padding-bottom: 0.75rem;">
+        <h3 style="margin: 0; font-size: 1.25rem;">
+          📅 Leave on <%= @date.strftime("%a, %-d %b %Y") %>
+        </h3>
+        <button type="button" data-action="click->modal#close" aria-label="Close" style="background: none; border: none; font-size: 1.5rem; color: var(--pico-muted-color, #64748b); line-height: 1; cursor: pointer; padding: 0;">&times;</button>
+      </header>
+
+      <!-- Existing Booked Leave for this day -->
+      <% if @existing_entries.any? %>
+        <div style="margin-bottom: 1.25rem; padding: 0.75rem; background-color: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+          <strong style="font-size: 0.85rem; color: #475569;">Currently Booked:</strong>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
+            <% @existing_entries.each do |entry| %>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: <%= entry.person.color %>;"></span>
+                  <strong><%= entry.person.name %></strong>:
+                  <span>
+                    <% if entry.custom_hours.present? %>
+                      <%= entry.custom_hours %> hrs
+                    <% elsif entry.half_day? %>
+                      <%= entry.half_day.capitalize %> Half-Day
+                    <% else %>
+                      Full Day
+                    <% end %>
+                  </span>
+                </div>
+                <%= button_to "Remove", leave_entry_path(entry, calendar_start_date: @calendar_start_date), method: :delete, class: "contrast outline", style: "padding: 0.15rem 0.5rem; font-size: 0.75rem; margin: 0;" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Book / Edit Leave Form -->
+      <%= form_with(url: leave_entries_path, method: :post, local: true) do |f| %>
+        <%= hidden_field_tag :calendar_start_date, @calendar_start_date %>
+
+        <div style="margin-bottom: 1rem;">
+          <label for="modal_person_id">Person</label>
+          <%= select_tag "leave_entry[person_id]", options_from_collection_for_select(@people, :id, :name, @selected_person&.id), id: "modal_person_id", required: true %>
+        </div>
+
+        <div class="grid" style="margin-bottom: 1rem;">
+          <div>
+            <label for="modal_start_date">Start Date</label>
+            <%= date_field_tag "leave_entry[start_date]", @date.to_s, id: "modal_start_date", required: true %>
+          </div>
+          <div>
+            <label for="modal_end_date">End Date (for range)</label>
+            <%= date_field_tag "leave_entry[end_date]", @date.to_s, id: "modal_end_date", required: true %>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-bottom: 1rem;">
+          <div>
+            <label for="modal_half_day">Leave Duration</label>
+            <%= select_tag "leave_entry[half_day]", options_for_select([["Full Day", "none"], ["Morning Only (0.5 day)", "morning"], ["Afternoon Only (0.5 day)", "afternoon"]], @active_entry&.half_day || "none"), id: "modal_half_day" %>
+          </div>
+          <div>
+            <label for="modal_custom_hours">Custom Hours (Optional)</label>
+            <%= number_field_tag "leave_entry[custom_hours]", @active_entry&.custom_hours, step: 0.25, min: 0, max: 24, id: "modal_custom_hours", placeholder: "e.g. 3.5" %>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label for="modal_notes">Notes (Optional)</label>
+          <%= text_field_tag "leave_entry[notes]", @active_entry&.notes, id: "modal_notes", placeholder: "e.g. Doctor appointment or holiday trip" %>
+        </div>
+
+        <footer style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">
+          <button type="button" class="secondary outline" data-action="click->modal#close" style="margin: 0;">Close</button>
+          <%= submit_tag "Save Leave", class: "contrast", style: "margin: 0;" %>
+        </footer>
+      <% end %>
+    </article>
+  </dialog>
+</turbo-frame>

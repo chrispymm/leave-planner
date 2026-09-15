@@ -1,0 +1,71 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h2 style="margin-bottom: 0.25rem;">People & Allowances</h2>
+    <p style="color: var(--pico-muted-color); margin-bottom: 0;">Manage family members and their annual leave entitlement rules.</p>
+  </div>
+  <div>
+    <%= link_to "+ Add Person", new_person_path, role: "button" %>
+  </div>
+</div>
+
+<% if @people.empty? %>
+  <article style="text-align: center; padding: 3rem 1rem;">
+    <h3>No people added yet</h3>
+    <p>Add people to start tracking and planning leave on the calendar.</p>
+    <%= link_to "Add Person", new_person_path, role: "button" %>
+  </article>
+<% else %>
+  <div style="overflow-x: auto;">
+    <table role="grid">
+      <thead>
+        <tr>
+          <th>Person</th>
+          <th>Allowance</th>
+          <th>Working Hours</th>
+          <th>Bank Holiday Rule</th>
+          <th>Leave Year</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @people.each do |person| %>
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <span style="display: inline-block; width: 1.25rem; height: 1.25rem; border-radius: 50%; background-color: <%= person.color %>; border: 1px solid rgba(0,0,0,0.2);"></span>
+                <strong><%= person.name %></strong>
+              </div>
+            </td>
+            <td>
+              <%= person.format_amount(person.allowance_amount) %> <%= person.allowance_unit %>
+              <% if person.initial_allowance_active_for? %>
+                <div style="font-size: 0.75rem; color: #0284c7; margin-top: 2px;">
+                  Current: <%= person.format_amount(person.initial_remaining_allowance) %> <%= person.allowance_unit %> (from <%= person.initial_allowance_date.strftime("%-d %b") %>)
+                </div>
+              <% end %>
+            </td>
+            <td>
+              <%= person.format_amount(person.hours_per_day) %> hrs / day
+            </td>
+            <td>
+              <% if person.include_bank_holidays? %>
+                <span class="badge" style="background-color: #fef3c7; color: #92400e; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">Included in allowance</span>
+              <% else %>
+                <span class="badge" style="background-color: #d1fae5; color: #065f46; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85rem;">Excluded (Free days)</span>
+              <% end %>
+            </td>
+            <td>
+              Resets <%= person.leave_year_start_day_formatted %>
+            </td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.5rem;">
+                <%= link_to "Edit", edit_person_path(person), role: "button", class: "secondary outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+                <%= button_to "Delete", person_path(person), method: :delete, data: { turbo_confirm: "Are you sure you want to remove #{person.name}? All booked leave will also be deleted." }, class: "contrast outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

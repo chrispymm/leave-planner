@@ -1,0 +1,11 @@
+# Bank Holidays fixtures
+new_year:
+  title: New Year's Day
+  date: 2026-01-01
+  division: england-and-wales
+
+good_friday:
+  title: Good Friday
+  date: 2026-04-03
+  division: england-and-wales
+

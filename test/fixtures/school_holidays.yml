@@ -1,0 +1,13 @@
+# School Holidays fixtures
+summer:
+  title: Summer Holidays
+  start_date: 2026-07-23
+  end_date: 2026-09-02
+  color: "#f59e0b"
+
+half_term:
+  title: Autumn Half Term
+  start_date: 2026-10-26
+  end_date: 2026-10-30
+  color: "#f59e0b"
+

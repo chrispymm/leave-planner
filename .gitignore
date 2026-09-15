@@ -1,0 +1,50 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/.keep
+
+# Ignore storage (uploaded files in development and any SQLite databases).
+/storage/*
+!/storage/.keep
+
+/tmp/storage/*
+!/tmp/storage/.keep
+
+# Ignore SQLite databases in db directory
+/db/*.sqlite3
+/db/*.sqlite3-*
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
+/config/credentials/*.key
+
+# Ignore dotenv environment files.
+/.env*
+!.env.example
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE / Editor files and language server caches
+.vscode/
+.idea/
+.ruby-lsp/
+*.swp
+*~
+
+# Ignore compiled assets / node_modules if added
+/node_modules/
+/public/assets
+/app/assets/builds/*
+!/app/assets/builds/.keep
