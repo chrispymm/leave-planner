@@ -28,6 +28,7 @@
         <nav>
           <ul class="nav-links">
             <li><%= link_to "📅 12-Month Calendar", root_path, class: (controller_name == "calendar" ? "active" : "") %></li>
+            <li><%= link_to "📋 Leave Ranges", leave_ranges_path, class: (controller_name == "leave_ranges" ? "active" : "") %></li>
             <li><%= link_to "👥 People & Allowances", people_path, class: (controller_name == "people" ? "active" : "") %></li>
             <li><%= link_to "🎒 School Holidays", school_holidays_path, class: (controller_name == "school_holidays" ? "active" : "") %></li>
             <li><%= link_to "🇬🇧 Bank Holidays", bank_holidays_path, class: (controller_name == "bank_holidays" ? "active" : "") %></li>

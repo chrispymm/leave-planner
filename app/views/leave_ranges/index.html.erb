@@ -1,0 +1,135 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h2 style="margin-bottom: 0.25rem;">Leave Ranges</h2>
+    <p style="color: var(--pico-muted-color); margin-bottom: 0;">Manage annual leave as date ranges per person.</p>
+  </div>
+  <div>
+    <% if @selected_person %>
+      <%= link_to "+ Book Leave Range", new_person_leave_range_path(@selected_person), role: "button" %>
+    <% end %>
+  </div>
+</div>
+
+<!-- Person Selection Tabs -->
+<% if @people.any? %>
+  <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+    <% @people.each do |p| %>
+      <%= link_to person_leave_ranges_path(p), class: "nav-btn #{p == @selected_person ? 'contrast' : 'secondary outline'}", style: (p == @selected_person ? "background-color: #{p.color}; border-color: #{p.color}; color: white; padding: 0.4rem 1rem;" : "border-color: #{p.color}; color: #{p.color}; padding: 0.4rem 1rem;") do %>
+        <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: <%= p == @selected_person ? 'white' : p.color %>; margin-right: 6px;"></span>
+        <strong><%= p.name %></strong>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @selected_person.nil? %>
+  <article style="text-align: center; padding: 3rem 1rem;">
+    <h3>No people added yet</h3>
+    <p>Add people first to start booking leave ranges.</p>
+    <%= link_to "Add Person", new_person_path, role: "button" %>
+  </article>
+<% else %>
+  <!-- Summary Cards for Selected Person -->
+  <div class="summary-bar" style="margin-bottom: 1.5rem;">
+    <div class="person-card" style="border-top: 4px solid <%= @selected_person.color %>; max-width: 100%; flex: 1;">
+      <div class="person-card-header">
+        <span class="person-color-dot" style="background-color: <%= @selected_person.color %>;"></span>
+        <strong style="font-size: 1.1rem;"><%= @selected_person.name %> &mdash; Allowance Overview</strong>
+        <% if @selected_person.include_bank_holidays? %>
+          <span style="font-size: 0.7rem; background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Incl. Bank Holidays</span>
+        <% else %>
+          <span style="font-size: 0.7rem; background-color: #d1fae5; color: #065f46; padding: 2px 6px; border-radius: 4px; margin-left: auto;">Excl. Bank Holidays</span>
+        <% end %>
+      </div>
+
+      <div class="grid" style="margin-top: 0.5rem;">
+        <div class="stats-row">
+          <span><%= @selected_person.initial_allowance_active_for?(@year_range) ? "Starting Balance:" : "Annual Entitlement:" %></span>
+          <span class="stats-value">
+            <%= @selected_person.format_amount(@starting_allowance) %> <%= @selected_person.allowance_unit %>
+          </span>
+        </div>
+        <div class="stats-row">
+          <span>Booked in Leave Year:</span>
+          <span class="stats-value" style="color: <%= @selected_person.color %>;">
+            <%= @selected_person.format_amount(@used_allowance) %> <%= @selected_person.allowance_unit %>
+          </span>
+        </div>
+        <div class="stats-row">
+          <span style="font-weight: 600;">Remaining Balance:</span>
+          <span class="stats-value" style="font-size: 1.1rem; color: <%= @remaining_allowance >= 0 ? '#059669' : '#dc2626' %>;">
+            <%= @selected_person.format_amount(@remaining_allowance) %> <%= @selected_person.allowance_unit %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @leave_ranges.empty? %>
+    <article style="text-align: center; padding: 3rem 1rem;">
+      <h3>No leave booked yet for <%= @selected_person.name %></h3>
+      <p>Click below to book holidays or time off as a date range.</p>
+      <%= link_to "+ Book Leave Range", new_person_leave_range_path(@selected_person), role: "button" %>
+    </article>
+  <% else %>
+    <div style="overflow-x: auto;">
+      <table role="grid">
+        <thead>
+          <tr>
+            <th>Holiday / Leave</th>
+            <th>Dates</th>
+            <th>Leave Span</th>
+            <th>Allowance Cost</th>
+            <th>Type / Rate</th>
+            <th>Notes</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @leave_ranges.each do |range| %>
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span style="display: inline-block; width: 1.25rem; height: 1.25rem; border-radius: 4px; background-color: <%= @selected_person.color %>; border: 1px solid rgba(0,0,0,0.2);"></span>
+                  <div>
+                    <strong><%= range.display_title %></strong>
+                    <% if range.title.present? %>
+                      <div style="font-size: 0.75rem; color: var(--pico-muted-color);"><%= range.formatted_dates %></div>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <%= range.start_date.strftime("%a, %-d %b %Y") %>
+                <% if range.start_date != range.end_date %>
+                  &ndash; <%= range.end_date.strftime("%a, %-d %b %Y") %>
+                <% end %>
+              </td>
+              <td>
+                <%= range.duration_days %> <%= "calendar day".pluralize(range.duration_days) %>
+                <small style="color: var(--pico-muted-color); display: block;"><%= range.working_days_count %> <%= "working day".pluralize(range.working_days_count) %></small>
+              </td>
+              <td>
+                <strong style="color: <%= @selected_person.color %>; font-size: 1rem;">
+                  <%= range.duration_display %>
+                </strong>
+              </td>
+              <td>
+                <%= range.type_display %>
+              </td>
+              <td>
+                <%= range.notes.presence || "-" %>
+              </td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 0.5rem;">
+                  <%= link_to "Edit", edit_leave_range_path(range.id), role: "button", class: "secondary outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+                  <%= button_to "Delete", leave_range_path(range.id), method: :delete, data: { turbo_confirm: "Are you sure you want to delete this leave range (#{range.start_date} to #{range.end_date})?" }, class: "contrast outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+<% end %>

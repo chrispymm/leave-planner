@@ -33,6 +33,7 @@ class LeaveEntriesController < ApplicationController
 
   def create
     person = Person.find(params[:leave_entry][:person_id])
+    title = params[:leave_entry][:title].presence
     start_date = Date.parse(params[:leave_entry][:start_date].presence || params[:leave_entry][:date])
     end_date = params[:leave_entry][:end_date].present? ? Date.parse(params[:leave_entry][:end_date]) : start_date
     half_day = params[:leave_entry][:half_day].presence || "none"
@@ -50,6 +51,7 @@ class LeaveEntriesController < ApplicationController
       next if (start_date != end_date) && (d.saturday? || d.sunday?)
 
       entry = LeaveEntry.find_or_initialize_by(person: person, date: d)
+      entry.title = title
       entry.half_day = half_day
       entry.custom_hours = custom_hours
       entry.notes = notes
@@ -79,6 +81,6 @@ class LeaveEntriesController < ApplicationController
   end
 
   def leave_entry_params
-    params.require(:leave_entry).permit(:person_id, :date, :half_day, :custom_hours, :notes)
+    params.require(:leave_entry).permit(:person_id, :title, :date, :half_day, :custom_hours, :notes)
   end
 end

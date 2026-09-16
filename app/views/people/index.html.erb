@@ -59,6 +59,7 @@
             </td>
             <td style="text-align: right;">
               <div style="display: inline-flex; gap: 0.5rem;">
+                <%= link_to "📋 View Leave", person_leave_ranges_path(person), role: "button", class: "contrast", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
                 <%= link_to "Edit", edit_person_path(person), role: "button", class: "secondary outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
                 <%= button_to "Delete", person_path(person), method: :delete, data: { turbo_confirm: "Are you sure you want to remove #{person.name}? All booked leave will also be deleted." }, class: "contrast outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
               </div>

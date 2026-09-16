@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_15_221617) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_16_100648) do
   create_table "bank_holidays", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.date "date", null: false
@@ -29,6 +29,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_15_221617) do
     t.string "half_day", default: "none", null: false
     t.text "notes"
     t.integer "person_id", null: false
+    t.string "title"
     t.datetime "updated_at", null: false
     t.index ["date"], name: "index_leave_entries_on_date"
     t.index ["person_id", "date"], name: "index_leave_entries_on_person_id_and_date", unique: true

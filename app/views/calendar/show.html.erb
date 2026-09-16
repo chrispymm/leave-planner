@@ -74,7 +74,7 @@
                       <% end %>
 
                       <% entries.each do |entry| %>
-                        <span class="leave-badge" style="background-color: <%= entry.person.color %>;" title="<%= entry.person.name %>: <%= entry.half_day? ? entry.half_day : 'Full day' %>">
+                        <span class="leave-badge" style="background-color: <%= entry.person.color %>;" title="<%= [entry.person.name, entry.title.presence, (entry.half_day? ? entry.half_day : 'Full day')].compact.join(': ') %>">
                           <%= entry.person.name.first(1) %>
                           <% if entry.custom_hours.present? %>
                             (<%= entry.custom_hours %>h)
@@ -124,7 +124,11 @@
     <div class="calendar-sidebar-col">
       <div style="font-weight: 700; font-size: 1rem; color: var(--pico-color); margin-bottom: -0.25rem; display: flex; justify-content: space-between; align-items: center;">
         <span>Leave Allowances</span>
-        <%= link_to "Manage", people_path, style: "font-size: 0.8rem; font-weight: normal; text-decoration: none;" %>
+        <div style="display: flex; gap: 0.5rem; font-size: 0.8rem; font-weight: normal;">
+          <%= link_to "List View", leave_ranges_path, style: "text-decoration: none;" %>
+          <span>•</span>
+          <%= link_to "People", people_path, style: "text-decoration: none;" %>
+        </div>
       </div>
 
       <% @people.each do |person| %>

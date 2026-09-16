@@ -44,6 +44,11 @@
           <%= select_tag "leave_entry[person_id]", options_from_collection_for_select(@people, :id, :name, @selected_person&.id), id: "modal_person_id", required: true %>
         </div>
 
+        <div style="margin-bottom: 1rem;">
+          <label for="modal_title">Holiday Title (Optional)</label>
+          <%= text_field_tag "leave_entry[title]", @active_entry&.title, id: "modal_title", placeholder: "e.g. Summer Vacation, Doctor (defaults to date if blank)" %>
+        </div>
+
         <div class="grid" style="margin-bottom: 1rem;">
           <div>
             <label for="modal_start_date">Start Date</label>

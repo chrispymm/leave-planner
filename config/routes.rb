@@ -3,7 +3,11 @@ Rails.application.routes.draw do
 
   resource :calendar, only: [ :show ], controller: "calendar"
 
-  resources :people
+  resources :people do
+    resources :leave_ranges, only: [ :index, :new, :create ]
+  end
+
+  resources :leave_ranges, only: [ :index, :edit, :update, :destroy ]
   resources :school_holidays
   resources :bank_holidays, only: [ :index ] do
     collection do
