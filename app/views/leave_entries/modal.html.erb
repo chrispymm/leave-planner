@@ -36,7 +36,7 @@
       <% end %>
 
       <!-- Book / Edit Leave Form -->
-      <%= form_with(url: leave_entries_path, method: :post, data: { turbo_frame: "_top" }) do |f| %>
+      <%= form_with(url: leave_entries_path, method: :post, data: { turbo_frame: "_top", controller: "date-range" }) do |f| %>
         <%= hidden_field_tag :calendar_start_date, @calendar_start_date %>
 
         <div style="margin-bottom: 1rem;">
@@ -52,11 +52,11 @@
         <div class="grid" style="margin-bottom: 1rem;">
           <div>
             <label for="modal_start_date">Start Date</label>
-            <%= date_field_tag "leave_entry[start_date]", @date.to_s, id: "modal_start_date", required: true %>
+            <%= date_field_tag "leave_entry[start_date]", @date.to_s, id: "modal_start_date", required: true, data: { date_range_target: "startDate", action: "change->date-range#startDateChanged input->date-range#startDateChanged" } %>
           </div>
           <div>
             <label for="modal_end_date">End Date (for range)</label>
-            <%= date_field_tag "leave_entry[end_date]", @date.to_s, id: "modal_end_date", required: true %>
+            <%= date_field_tag "leave_entry[end_date]", @date.to_s, min: @date.to_s, id: "modal_end_date", required: true, data: { date_range_target: "endDate" } %>
           </div>
         </div>
 

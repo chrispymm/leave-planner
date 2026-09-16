@@ -68,9 +68,7 @@
 
                     <div class="day-badges">
                       <% if bank_holiday %>
-                        <div class="bh-badge" title="<%= bank_holiday.title %>">
-                          🏛️ <%= bank_holiday.title %>
-                        </div>
+                        
                       <% end %>
 
                       <% entries.each do |entry| %>
@@ -125,9 +123,9 @@
       <div style="font-weight: 700; font-size: 1rem; color: var(--pico-color); margin-bottom: -0.25rem; display: flex; justify-content: space-between; align-items: center;">
         <span>Leave Allowances</span>
         <div style="display: flex; gap: 0.5rem; font-size: 0.8rem; font-weight: normal;">
-          <%= link_to "List View", leave_ranges_path, style: "text-decoration: none;" %>
+          <%= link_to "List View", leave_ranges_path, data: { turbo_frame: "_top" }, style: "text-decoration: none;" %>
           <span>•</span>
-          <%= link_to "People", people_path, style: "text-decoration: none;" %>
+          <%= link_to "People", people_path, data: { turbo_frame: "_top" }, style: "text-decoration: none;" %>
         </div>
       </div>
 
@@ -143,11 +141,11 @@
         <div class="person-card" style="border-top: 4px solid <%= person.color %>;">
           <div class="person-card-header">
             <span class="person-color-dot" style="background-color: <%= person.color %>;"></span>
-            <strong style="font-size: 1.05rem;"><%= person.name %></strong>
-            <% if person.include_bank_holidays? %>
-              <span style="font-size: 0.65rem; background-color: #fef3c7; color: #92400e; padding: 2px 5px; border-radius: 4px; margin-left: auto;">Incl. BH</span>
-            <% else %>
-              <span style="font-size: 0.65rem; background-color: #d1fae5; color: #065f46; padding: 2px 5px; border-radius: 4px; margin-left: auto;">Excl. BH</span>
+            <%= link_to person_leave_ranges_path(person), data: { turbo_frame: "_top" }, style: "color: inherit; text-decoration: none;", title: "View #{person.name}'s leave list" do %>
+              <strong style="font-size: 1.05rem;"><%= person.name %></strong>
+            <% end %>
+            <%= link_to edit_person_path(person), data: { turbo_frame: "_top" }, title: "Edit #{person.name}'s leave settings", style: "margin-left: auto; text-decoration: none; font-size: 1rem; line-height: 1; opacity: 0.75; transition: opacity 0.15s;" do %>
+              ⚙️
             <% end %>
           </div>
 
@@ -179,9 +177,26 @@
       <% if @people.empty? %>
         <article style="text-align: center; padding: 1.5rem;">
           <p style="margin-bottom: 0.5rem; font-size: 0.85rem;">No people added yet.</p>
-          <%= link_to "+ Add Person", new_person_path, role: "button", style: "font-size: 0.85rem;" %>
+          <%= link_to "+ Add Person", new_person_path, data: { turbo_frame: "_top" }, role: "button", style: "font-size: 0.85rem;" %>
         </article>
       <% end %>
+
+      <!-- Holiday Settings Quick Links -->
+      <div style="margin-top: 1rem; padding: 0.75rem 1rem; background-color: var(--pico-card-background-color, #ffffff); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.875rem;">
+        <div style="font-weight: 600; color: var(--pico-muted-color); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">
+          Holiday Calendars
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <%= link_to school_holidays_path, data: { turbo_frame: "_top" }, style: "display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: var(--pico-color);" do %>
+            <span>🎒 School Holidays</span>
+            <span style="font-size: 0.8rem; color: var(--pico-muted-color);">Manage ›</span>
+          <% end %>
+          <%= link_to bank_holidays_path, data: { turbo_frame: "_top" }, style: "display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: var(--pico-color); border-top: 1px solid var(--border-color); padding-top: 0.5rem;" do %>
+            <span>🇬🇧 Bank Holidays</span>
+            <span style="font-size: 0.8rem; color: var(--pico-muted-color);">View ›</span>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 </turbo-frame>

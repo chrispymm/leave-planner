@@ -20,24 +20,13 @@
   </head>
 
   <body>
-    <header class="site-nav">
-      <div class="container">
-        <a href="<%= root_path %>" class="site-logo">
-          <span>🗓️</span> <strong>Annual Leave Planner</strong>
-        </a>
-        <nav>
-          <ul class="nav-links">
-            <li><%= link_to "📅 12-Month Calendar", root_path, class: (controller_name == "calendar" ? "active" : "") %></li>
-            <li><%= link_to "📋 Leave Ranges", leave_ranges_path, class: (controller_name == "leave_ranges" ? "active" : "") %></li>
-            <li><%= link_to "👥 People & Allowances", people_path, class: (controller_name == "people" ? "active" : "") %></li>
-            <li><%= link_to "🎒 School Holidays", school_holidays_path, class: (controller_name == "school_holidays" ? "active" : "") %></li>
-            <li><%= link_to "🇬🇧 Bank Holidays", bank_holidays_path, class: (controller_name == "bank_holidays" ? "active" : "") %></li>
-          </ul>
+    <main class="<%= controller_name == 'calendar' ? 'container-fluid' : 'container' %>" style="<%= controller_name == 'calendar' ? 'padding: 1.25rem 1.5rem 1.5rem;' : 'padding: 1.5rem 1rem 2.5rem;' %>">
+      <% if controller_name != "calendar" %>
+        <nav style="margin-bottom: 1.5rem;">
+          <%= link_to "← Back to Calendar", root_path, class: "secondary outline", role: "button", style: "display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.875rem; padding: 0.35rem 0.85rem;" %>
         </nav>
-      </div>
-    </header>
+      <% end %>
 
-    <main class="<%= controller_name == 'calendar' ? 'container-fluid' : 'container' %>" style="<%= controller_name == 'calendar' ? 'padding: 0 1.5rem;' : '' %>">
       <% if notice %>
         <div class="flash-message">
           <span><%= notice %></span>

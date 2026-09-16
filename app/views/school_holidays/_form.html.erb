@@ -1,4 +1,4 @@
-<%= form_with(model: school_holiday, local: true) do |f| %>
+<%= form_with(model: school_holiday, local: true, data: { controller: "date-range" }) do |f| %>
   <% if school_holiday.errors.any? %>
     <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
       <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(school_holiday.errors.count, "error") %> prohibited this holiday from being saved:</h4>
@@ -18,11 +18,11 @@
   <div class="grid" style="margin-top: 1rem;">
     <div>
       <%= f.label :start_date, "Start Date" %>
-      <%= f.date_field :start_date, required: true %>
+      <%= f.date_field :start_date, required: true, data: { date_range_target: "startDate", action: "change->date-range#startDateChanged input->date-range#startDateChanged" } %>
     </div>
     <div>
       <%= f.label :end_date, "End Date" %>
-      <%= f.date_field :end_date, required: true %>
+      <%= f.date_field :end_date, min: school_holiday.start_date&.to_s, required: true, data: { date_range_target: "endDate" } %>
     </div>
   </div>
 

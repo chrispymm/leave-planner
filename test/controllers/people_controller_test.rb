@@ -9,6 +9,7 @@ class PeopleControllerTest < ActionDispatch::IntegrationTest
     get people_url
     assert_response :success
     assert_select "h2", "People & Allowances"
+    assert_select "a[href='#{root_path}']", text: /Back to Calendar/
   end
 
   test "should get new" do
