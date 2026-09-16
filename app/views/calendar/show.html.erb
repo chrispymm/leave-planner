@@ -74,14 +74,14 @@
                       <% end %>
 
                       <% entries.each do |entry| %>
-                        <div class="leave-badge" style="background-color: <%= entry.person.color %>;" title="<%= entry.person.name %>: <%= entry.half_day? ? entry.half_day : 'Full day' %>">
-                          <%= entry.person.name.first(4) %>
+                        <span class="leave-badge" style="background-color: <%= entry.person.color %>;" title="<%= entry.person.name %>: <%= entry.half_day? ? entry.half_day : 'Full day' %>">
+                          <%= entry.person.name.first(1) %>
                           <% if entry.custom_hours.present? %>
                             (<%= entry.custom_hours %>h)
                           <% elsif entry.half_day? %>
                             (<%= entry.half_day == 'morning' ? 'AM' : 'PM' %>)
                           <% end %>
-                        </div>
+                        </span>
                       <% end %>
                     </div>
                   <% end %>

@@ -10,6 +10,7 @@ class LeaveEntriesControllerTest < ActionDispatch::IntegrationTest
     get modal_leave_entries_url(date: "2026-06-15", person_id: @person.id)
     assert_response :success
     assert_select "turbo-frame#modal_frame"
+    assert_select "form[data-turbo-frame='_top']"
   end
 
   test "should toggle leave entry on and off" do
