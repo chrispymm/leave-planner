@@ -1,0 +1,16 @@
+<div class="day-number" style="<%= is_today ? 'color: var(--today-border);' : '' %>">
+  <%= date.day %>
+</div>
+
+<div class="day-badges">
+  <% entries.each do |entry| %>
+    <span class="leave-badge" style="background-color: <%= entry.person.color %>;" title="<%= [entry.person.name, entry.title.presence, (entry.half_day? ? entry.half_day : 'Full day')].compact.join(': ') %>">
+      <%= entry.person.name.first(1) %>
+      <% if entry.custom_hours.present? %>
+        (<%= entry.custom_hours %>h)
+      <% elsif entry.half_day? %>
+        (<%= entry.half_day == 'morning' ? 'AM' : 'PM' %>)
+      <% end %>
+    </span>
+  <% end %>
+</div>

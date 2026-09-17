@@ -129,6 +129,40 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.leave-year-summary {
+  border-top: 1px solid var(--border-color);
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+}
+
+.leave-year-summary-title {
+  color: var(--pico-color);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  padding-right: 1.5rem;
+  position: relative;
+}
+
+.leave-year-summary-title::after {
+  float: none;
+  position: absolute;
+  right: 0;
+  top: 0.15rem;
+}
+
+.leave-year-summary[open] .leave-year-summary-title {
+  margin-bottom: 0.4rem;
+}
+
+.leave-year-summary-title small {
+  color: var(--pico-muted-color);
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 400;
+}
+
 .person-color-dot {
   width: 14px;
   height: 14px;
@@ -154,7 +188,7 @@ body {
 /* Calendar Controls Header */
 .calendar-controls {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -163,12 +197,32 @@ body {
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
   gap: 0.75rem;
+  position: relative;
 }
 
-.nav-btn-group {
+.calendar-year-navigation {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.75rem;
   align-items: center;
+}
+
+.calendar-year-title {
+  min-width: 5rem;
+  color: var(--pico-color);
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.calendar-year-arrow {
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 0.2rem 0.65rem;
+}
+
+.calendar-controls > [role="button"] {
+  position: absolute;
+  right: 1.25rem;
 }
 
 .nav-btn {
@@ -218,6 +272,15 @@ body {
   box-sizing: border-box;
 }
 
+.month-card.current-month {
+  border: 2px solid var(--bank-holiday-border);
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+.month-card.past-month {
+  opacity: 0.5;
+}
+
 .month-header {
   font-size: 1rem;
   font-weight: 700;
@@ -226,6 +289,16 @@ body {
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--border-color);
   color: var(--pico-color);
+}
+
+@media (max-width: 700px) {
+  .calendar-controls {
+    justify-content: space-between;
+  }
+
+  .calendar-controls > [role="button"] {
+    position: static;
+  }
 }
 
 .days-of-week {
@@ -347,6 +420,98 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+}
+
+/* Calendar List Layout: each month as one horizontal row of days, stacked vertically */
+.calendar-list-12 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.month-list-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+.month-list-row.current-month {
+  border: 2px solid var(--bank-holiday-border);
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+}
+
+.month-list-row.past-month {
+  opacity: 0.5;
+}
+
+.month-list-label {
+  flex-shrink: 0;
+  width: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--pico-color);
+  border-right: 1px solid var(--border-color);
+  padding-right: 0.6rem;
+  text-align: center;
+}
+
+.month-list-days {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.day-cell-list {
+  height: 52px;
+  padding: 2px;
+}
+
+.day-weekday {
+  font-size: 0.55rem;
+  line-height: 1;
+  color: var(--pico-muted-color);
+  text-align: center;
+}
+
+.day-cell-list .day-number {
+  text-align: center;
+  margin-bottom: 1px;
+}
+
+.day-cell-list .day-badges {
+  flex-direction: column;
+  gap: 1px;
+}
+
+.day-cell-list .leave-badge {
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .month-list-row {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .month-list-label {
+    width: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding-right: 0;
+    padding-bottom: 0.35rem;
+    justify-content: flex-start;
+  }
 }
 
 /* Legend */

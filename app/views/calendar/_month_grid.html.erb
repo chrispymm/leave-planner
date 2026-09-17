@@ -1,0 +1,42 @@
+<%
+  month_classes = ["month-card"]
+  month_classes << "current-month" if month_date == Date.current.beginning_of_month
+  month_classes << "past-month" if month_date < Date.current.beginning_of_month
+%>
+<div class="<%= month_classes.join(" ") %>">
+  <div class="month-header">
+    <%= month_date.strftime("%B") %>
+  </div>
+
+  <div class="days-of-week">
+    <% CalendarHelper::DAY_NAMES.each do |dn| %>
+      <div><%= dn[0] %></div>
+    <% end %>
+  </div>
+
+  <div class="month-days-grid">
+    <% month_grid_cells(month_date).each do |date| %>
+      <% if date.nil? %>
+        <div class="day-cell empty"></div>
+      <% else %>
+        <%
+          is_weekend = date.saturday? || date.sunday?
+          is_today = (date == Date.current)
+          bank_holiday = @bank_holidays_map[date]
+          school_holidays = @school_holidays_map[date]
+          entries = @leave_entries_by_date[date] || []
+
+          classes = ["day-cell"]
+          classes << "weekend" if is_weekend
+          classes << "today" if is_today
+          classes << "bank-holiday" if bank_holiday
+          classes << "school-holiday" if school_holidays.present?
+        %>
+
+        <%= link_to modal_leave_entries_path(date: date.to_s, calendar_start_date: @start_date.to_s, **@layout_params), data: { turbo_frame: "modal_frame" }, class: classes.join(" "), title: [date.strftime("%a %-d %b"), bank_holiday&.title, school_holidays&.map(&:title)&.join(", ")].compact.join(" • ") do %>
+          <%= render "calendar/day_cell_content", date: date, is_today: is_today, entries: entries %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

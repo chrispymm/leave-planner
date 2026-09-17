@@ -48,6 +48,10 @@ class Person < ApplicationRecord
     leave_entries.where(date: range)
   end
 
+  def leave_year_ranges_overlapping(range)
+    [ leave_year_range(range.begin), leave_year_range(range.end) ].uniq.sort_by(&:begin)
+  end
+
   def initial_allowance_active_for?(range_or_ref_date = Date.current)
     return false if initial_remaining_allowance.nil? || initial_allowance_date.blank?
 

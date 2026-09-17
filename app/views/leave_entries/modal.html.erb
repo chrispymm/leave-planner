@@ -28,7 +28,7 @@
                     <% end %>
                   </span>
                 </div>
-                <%= button_to "Remove", leave_entry_path(entry, calendar_start_date: @calendar_start_date), method: :delete, data: { turbo_frame: "_top" }, class: "contrast outline", style: "padding: 0.15rem 0.5rem; font-size: 0.75rem; margin: 0;" %>
+                <%= button_to "Remove", leave_entry_path(entry, calendar_start_date: @calendar_start_date, layout: @layout), method: :delete, data: { turbo_frame: "_top" }, class: "contrast outline", style: "padding: 0.15rem 0.5rem; font-size: 0.75rem; margin: 0;" %>
               </div>
             <% end %>
           </div>
@@ -38,15 +38,24 @@
       <!-- Book / Edit Leave Form -->
       <%= form_with(url: leave_entries_path, method: :post, data: { turbo_frame: "_top", controller: "date-range" }) do |f| %>
         <%= hidden_field_tag :calendar_start_date, @calendar_start_date %>
+        <%= hidden_field_tag :layout, @layout %>
 
-        <div style="margin-bottom: 1rem;">
-          <label for="modal_person_id">Person</label>
-          <%= select_tag "leave_entry[person_id]", options_from_collection_for_select(@people, :id, :name, @selected_person&.id), id: "modal_person_id", required: true %>
-        </div>
+        <fieldset style="margin-bottom: 1rem;">
+          <legend>People</legend>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;">
+            <% @people.each do |person| %>
+              <label style="display: inline-flex; align-items: center; gap: 0.4rem; margin: 0;">
+                <%= check_box_tag "leave_entry[person_ids][]", person.id, false, id: "modal_person_id_#{person.id}" %>
+                <span class="person-color-dot" style="background-color: <%= person.color %>;"></span>
+                <%= person.name %>
+              </label>
+            <% end %>
+          </div>
+        </fieldset>
 
         <div style="margin-bottom: 1rem;">
           <label for="modal_title">Holiday Title (Optional)</label>
-          <%= text_field_tag "leave_entry[title]", @active_entry&.title, id: "modal_title", placeholder: "e.g. Summer Vacation, Doctor (defaults to date if blank)" %>
+          <%= text_field_tag "leave_entry[title]", nil, id: "modal_title", placeholder: "e.g. Summer Vacation, Doctor (defaults to date if blank)" %>
         </div>
 
         <div class="grid" style="margin-bottom: 1rem;">
@@ -63,17 +72,17 @@
         <div class="grid" style="margin-bottom: 1rem;">
           <div>
             <label for="modal_half_day">Leave Duration</label>
-            <%= select_tag "leave_entry[half_day]", options_for_select([["Full Day", "none"], ["Morning Only (0.5 day)", "morning"], ["Afternoon Only (0.5 day)", "afternoon"]], @active_entry&.half_day || "none"), id: "modal_half_day" %>
+            <%= select_tag "leave_entry[half_day]", options_for_select([["Full Day", "none"], ["Morning Only (0.5 day)", "morning"], ["Afternoon Only (0.5 day)", "afternoon"]], "none"), id: "modal_half_day" %>
           </div>
           <div>
             <label for="modal_custom_hours">Custom Hours (Optional)</label>
-            <%= number_field_tag "leave_entry[custom_hours]", @active_entry&.custom_hours, step: 0.25, min: 0, max: 24, id: "modal_custom_hours", placeholder: "e.g. 3.5" %>
+            <%= number_field_tag "leave_entry[custom_hours]", nil, step: 0.25, min: 0, max: 24, id: "modal_custom_hours", placeholder: "e.g. 3.5" %>
           </div>
         </div>
 
         <div style="margin-bottom: 1.25rem;">
           <label for="modal_notes">Notes (Optional)</label>
-          <%= text_field_tag "leave_entry[notes]", @active_entry&.notes, id: "modal_notes", placeholder: "e.g. Doctor appointment or holiday trip" %>
+          <%= text_field_tag "leave_entry[notes]", nil, id: "modal_notes", placeholder: "e.g. Doctor appointment or holiday trip" %>
         </div>
 
         <footer style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.25rem;">

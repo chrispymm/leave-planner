@@ -1,7 +1,7 @@
 class LeaveRange
   include ActiveModel::Model
 
-  attr_accessor :id, :person, :person_id, :title, :start_date, :end_date, :half_day, :custom_hours, :notes, :entries, :cost_days, :cost_hours
+  attr_accessor :id, :person, :person_id, :person_ids, :title, :start_date, :end_date, :half_day, :custom_hours, :notes, :entries, :cost_days, :cost_hours
 
   def self.for_person(person)
     entries = person.leave_entries.order(:date).to_a

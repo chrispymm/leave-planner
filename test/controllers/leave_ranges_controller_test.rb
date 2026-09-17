@@ -3,6 +3,7 @@ require "test_helper"
 class LeaveRangesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @person = people(:alice)
+    @other_person = people(:bob)
     @leave_entry = leave_entries(:alice_vacation)
   end
 
@@ -17,6 +18,25 @@ class LeaveRangesControllerTest < ActionDispatch::IntegrationTest
     get new_person_leave_range_url(@person)
     assert_response :success
     assert_select "form"
+    assert_select "input[type='checkbox'][name='leave_range[person_ids][]']", count: 2
+  end
+
+  test "should create leave range for multiple people" do
+    assert_difference("LeaveEntry.count", 4) do
+      post person_leave_ranges_url(@person), params: {
+        leave_range: {
+          person_ids: [ @person.id, @other_person.id ],
+          title: "Shared trip",
+          start_date: "2026-10-05",
+          end_date: "2026-10-06",
+          half_day: "none"
+        }
+      }
+    end
+
+    assert_redirected_to person_leave_ranges_url(@person)
+    assert_equal 2, @person.leave_entries.where(title: "Shared trip").count
+    assert_equal 2, @other_person.leave_entries.where(title: "Shared trip").count
   end
 
   test "should create leave range across weekdays" do
@@ -41,10 +61,13 @@ class LeaveRangesControllerTest < ActionDispatch::IntegrationTest
     get edit_leave_range_url(range_id)
     assert_response :success
     assert_select "form[action='#{leave_range_path(range_id)}']"
+    assert_select "input[type='checkbox'][name='leave_range[person_ids][]']", count: 2
+    assert_select "input[type='checkbox'][name='leave_range[person_ids][]'][value='#{@person.id}'][checked]"
 
     patch leave_range_url(range_id), params: {
       leave_range: {
-        person_id: @person.id,
+        person_ids: [ @person.id, @other_person.id ],
+        title: "Shared updated trip",
         start_date: "2026-06-15",
         end_date: "2026-06-16",
         half_day: "morning",
@@ -53,6 +76,8 @@ class LeaveRangesControllerTest < ActionDispatch::IntegrationTest
     }
 
     assert_redirected_to person_leave_ranges_url(@person)
+    assert_equal 2, @person.leave_entries.where(title: "Shared updated trip").count
+    assert_equal 2, @other_person.leave_entries.where(title: "Shared updated trip").count
   end
 
   test "should create leave range with optional title" do

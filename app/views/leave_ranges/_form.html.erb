@@ -2,29 +2,25 @@
   <div style="margin-bottom: 1.5rem;">
     <h2 style="margin-bottom: 0.25rem;"><%= @leave_range.persisted? ? "Edit Leave Range" : "Book Leave Range" %></h2>
     <p style="color: var(--pico-muted-color); margin-bottom: 0;">
-      <% if @person %>
-        For <strong style="color: <%= @person.color %>;"><%= @person.name %></strong>
-      <% else %>
-        Book holidays as a continuous date range.
-      <% end %>
+      Apply this continuous date range to one or more people.
     </p>
   </div>
 
   <article>
     <%= form_with(model: @leave_range, url: (@leave_range.persisted? ? leave_range_path(@leave_range.id) : person_leave_ranges_path(@person)), method: (@leave_range.persisted? ? :patch : :post), data: { controller: "date-range" }) do |f| %>
-      <% if @people && @people.size > 1 && !@leave_range.persisted? %>
-        <div style="margin-bottom: 1.25rem;">
-          <%= f.label :person_id, "Person" %>
-          <%= f.collection_select :person_id, @people, :id, :name, { selected: @person.id }, required: true %>
+      <fieldset style="margin-bottom: 1.25rem;">
+        <legend>People</legend>
+        <%= hidden_field_tag "leave_range[person_ids][]", "" %>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem;">
+          <% @people.each do |person| %>
+            <label style="display: inline-flex; align-items: center; gap: 0.4rem; margin: 0;">
+              <%= check_box_tag "leave_range[person_ids][]", person.id, Array(@leave_range.person_ids).map(&:to_s).include?(person.id.to_s), id: "leave_range_person_id_#{person.id}" %>
+              <span class="person-color-dot" style="background-color: <%= person.color %>;"></span>
+              <%= person.name %>
+            </label>
+          <% end %>
         </div>
-      <% elsif @leave_range.persisted? %>
-        <div style="margin-bottom: 1.25rem;">
-          <%= f.label :person_id, "Person" %>
-          <%= f.collection_select :person_id, Person.order(:name), :id, :name, { selected: @person.id }, required: true %>
-        </div>
-      <% else %>
-        <%= f.hidden_field :person_id, value: @person.id %>
-      <% end %>
+      </fieldset>
 
       <div style="margin-bottom: 1.25rem;">
         <%= f.label :title, "Holiday / Title (Optional)" %>

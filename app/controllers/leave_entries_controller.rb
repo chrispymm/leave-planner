@@ -4,11 +4,10 @@ class LeaveEntriesController < ApplicationController
   def modal
     @date = params[:date].present? ? Date.parse(params[:date]) : Date.current
     @calendar_start_date = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
+    @layout = params[:layout] == "list" ? "list" : "grid"
     @people = Person.order(:name)
-    @selected_person = Person.find_by(id: params[:person_id]) || @people.first
 
     @existing_entries = LeaveEntry.where(date: @date).includes(:person)
-    @active_entry = @existing_entries.find { |e| e.person_id == @selected_person&.id }
 
     render layout: false
   end
@@ -26,13 +25,18 @@ class LeaveEntriesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to calendar_path(start_date: calendar_start, person_id: person.id) }
-      format.turbo_stream { redirect_to calendar_path(start_date: calendar_start, person_id: person.id) }
+      format.html { redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params) }
+      format.turbo_stream { redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params) }
     end
   end
 
   def create
-    person = Person.find(params[:leave_entry][:person_id])
+    person_ids = Array(params.dig(:leave_entry, :person_ids)).compact_blank
+    people = Person.where(id: person_ids).order(:name).to_a
+    if people.empty?
+      return redirect_to calendar_path(start_date: params[:calendar_start_date], **calendar_layout_params), alert: "Select at least one person."
+    end
+
     title = params[:leave_entry][:title].presence
     start_date = Date.parse(params[:leave_entry][:start_date].presence || params[:leave_entry][:date])
     end_date = params[:leave_entry][:end_date].present? ? Date.parse(params[:leave_entry][:end_date]) : start_date
@@ -45,36 +49,41 @@ class LeaveEntriesController < ApplicationController
       end_date = start_date
     end
 
-    # Create entries for each day in range
-    (start_date..end_date).each do |d|
-      # Skip weekends for bulk bookings unless specifically desired
-      next if (start_date != end_date) && (d.saturday? || d.sunday?)
+    ActiveRecord::Base.transaction do
+      people.each do |person|
+        (start_date..end_date).each do |d|
+          next if (start_date != end_date) && (d.saturday? || d.sunday?)
 
-      entry = LeaveEntry.find_or_initialize_by(person: person, date: d)
-      entry.title = title
-      entry.half_day = half_day
-      entry.custom_hours = custom_hours
-      entry.notes = notes
-      entry.save
+          entry = LeaveEntry.find_or_initialize_by(person: person, date: d)
+          entry.title = title
+          entry.half_day = half_day
+          entry.custom_hours = custom_hours
+          entry.notes = notes
+          entry.save!
+        end
+      end
     end
 
-    redirect_to calendar_path(start_date: calendar_start, person_id: person.id), notice: "Leave updated for #{person.name}."
+    redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params), notice: "Leave updated for #{people.map(&:name).to_sentence}."
   end
 
   def update
     calendar_start = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
     @leave_entry.update(leave_entry_params)
-    redirect_to calendar_path(start_date: calendar_start, person_id: @leave_entry.person_id), notice: "Leave updated."
+    redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params), notice: "Leave updated."
   end
 
   def destroy
-    person_id = @leave_entry.person_id
     calendar_start = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
     @leave_entry.destroy
-    redirect_to calendar_path(start_date: calendar_start, person_id: person_id), notice: "Leave entry removed."
+    redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params), notice: "Leave entry removed."
   end
 
   private
+
+  def calendar_layout_params
+    params[:layout] == "list" ? { layout: "list" } : {}
+  end
 
   def set_leave_entry
     @leave_entry = LeaveEntry.find(params[:id])

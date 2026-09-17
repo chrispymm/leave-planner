@@ -92,6 +92,12 @@ class PersonTest < ActiveSupport::TestCase
     range_pre = person.leave_year_range(Date.new(2026, 4, 5))
     assert_equal Date.new(2025, 4, 6), range_pre.begin
     assert_equal Date.new(2026, 4, 5), range_pre.end
+
+    overlapping_ranges = person.leave_year_ranges_overlapping(Date.new(2027, 1, 1)..Date.new(2027, 12, 31))
+    assert_equal [
+      Date.new(2026, 4, 6)..Date.new(2027, 4, 5),
+      Date.new(2027, 4, 6)..Date.new(2028, 4, 5)
+    ], overlapping_ranges
   end
 
   test "handles mid-year starting leave balance and resets on next leave year" do

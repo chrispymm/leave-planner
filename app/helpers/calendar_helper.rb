@@ -23,4 +23,10 @@ module CalendarHelper
 
     cells
   end
+
+  def leave_year_label(range)
+    return range.begin.year.to_s if range.begin.year == range.end.year
+
+    "#{range.begin.year}/#{range.end.strftime('%y')}"
+  end
 end
