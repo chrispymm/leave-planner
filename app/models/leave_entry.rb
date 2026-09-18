@@ -13,6 +13,16 @@ class LeaveEntry < ApplicationRecord
     date.saturday? || date.sunday?
   end
 
+  # These check only the immediate neighbour (with a Fri/Mon weekend bridge)
+  # via indexed lookups, rather than rebuilding the person's full range list.
+  def first_in_range?
+    !contiguous_neighbour(:before)
+  end
+
+  def last_in_range?
+    !contiguous_neighbour(:after)
+  end
+
   def half_day?
     %w[morning afternoon].include?(half_day)
   end
@@ -57,5 +67,28 @@ class LeaveEntry < ApplicationRecord
     else
       h_per_day
     end
+  end
+
+  private
+
+  # Finds the adjacent LeaveEntry (previous day for :before, next day for
+  # :after), bridging a weekend between Friday and Monday, and returns it
+  # only if LeaveRange.contiguous? considers the pair part of the same range.
+  def contiguous_neighbour(direction)
+    candidate_date = direction == :before ? date - 1 : date + 1
+    candidate = person.leave_entries.find_by(date: candidate_date)
+
+    if candidate.nil?
+      if direction == :before && date.monday?
+        candidate = person.leave_entries.find_by(date: date - 3) # preceding Friday
+      elsif direction == :after && date.friday?
+        candidate = person.leave_entries.find_by(date: date + 3) # following Monday
+      end
+    end
+
+    return nil unless candidate
+
+    earlier_entry, later_entry = direction == :before ? [ candidate, self ] : [ self, candidate ]
+    LeaveRange.contiguous?(earlier_entry, later_entry) ? candidate : nil
   end
 end

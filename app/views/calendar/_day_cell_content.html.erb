@@ -1,10 +1,10 @@
-<div class="day-number" style="<%= is_today ? 'color: var(--today-border);' : '' %>">
+<div class="day-number">
   <%= date.day %>
 </div>
 
 <div class="day-badges">
   <% entries.each do |entry| %>
-    <span class="leave-badge" style="background-color: <%= entry.person.color %>;" title="<%= [entry.person.name, entry.title.presence, (entry.half_day? ? entry.half_day : 'Full day')].compact.join(': ') %>">
+    <span class="leave-badge <%= "leave-badge--start" if entry.first_in_range? %> <%= "leave-badge--end" if entry.last_in_range? %> " style="background-color: <%= entry.person.color %>;" title="<%= [entry.person.name, entry.title.presence, (entry.half_day? ? entry.half_day : 'Full day')].compact.join(': ') %>">
       <%= entry.person.name.first(1) %>
       <% if entry.custom_hours.present? %>
         (<%= entry.custom_hours %>h)

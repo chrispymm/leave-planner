@@ -13,23 +13,7 @@ class LeaveRange
     entries.drop(1).each do |entry|
       prev_entry = current_entries.last
 
-      # Check if entry is consecutive or contiguous across a weekend
-      days_diff = (entry.date - prev_entry.date).to_i
-      is_contiguous = if days_diff == 1
-                        true
-      elsif days_diff <= 3 && prev_entry.date.friday? && entry.date.monday?
-                        true
-      else
-                        false
-      end
-
-      # Check if characteristics match (title, half_day, custom_hours, notes)
-      same_attributes = (entry.title == prev_entry.title) &&
-                        (entry.half_day == prev_entry.half_day) &&
-                        (entry.custom_hours == prev_entry.custom_hours) &&
-                        (entry.notes == prev_entry.notes)
-
-      if is_contiguous && same_attributes
+      if contiguous?(prev_entry, entry)
         current_entries << entry
       else
         ranges << build_range_from_entries(person, current_entries)
@@ -39,6 +23,36 @@ class LeaveRange
 
     ranges << build_range_from_entries(person, current_entries) if current_entries.any?
     ranges
+  end
+
+  # Shared predicate: are two LeaveEntry records part of the same contiguous
+  # range? `earlier_entry` must fall on or before `later_entry`'s date.
+  # Used both when grouping a person's full entry list (.for_person) and
+  # when checking a single entry's neighbours (LeaveEntry#first_in_range?/
+  # #last_in_range?) so the definition of "contiguous" only lives in one place.
+  def self.contiguous?(earlier_entry, later_entry)
+    return false if earlier_entry.nil? || later_entry.nil?
+
+    days_diff = (later_entry.date - earlier_entry.date).to_i
+
+    is_contiguous = if days_diff == 1
+                      true
+    elsif days_diff == 3 && earlier_entry.date.friday? && later_entry.date.monday?
+                      true
+    else
+                      false
+    end
+
+    return false unless is_contiguous
+
+    same_attributes?(earlier_entry, later_entry)
+  end
+
+  def self.same_attributes?(entry_a, entry_b)
+    entry_a.title == entry_b.title &&
+      entry_a.half_day == entry_b.half_day &&
+      entry_a.custom_hours == entry_b.custom_hours &&
+      entry_a.notes == entry_b.notes
   end
 
   def self.build_range_from_entries(person, entries)

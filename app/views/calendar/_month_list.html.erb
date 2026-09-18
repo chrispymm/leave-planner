@@ -6,10 +6,9 @@
 %>
 <div class="<%= month_classes.join(" ") %>">
   <div class="month-list-label">
-    <%= month_date.strftime("%B") %>
+    <%= month_date.strftime("%b") %>
   </div>
 
-  <div class="month-list-days" style="grid-template-columns: repeat(<%= days_in_month %>, minmax(0, 1fr));">
     <% (1..days_in_month).each do |day_num| %>
       <%
         date = Date.new(month_date.year, month_date.month, day_num)
@@ -27,9 +26,7 @@
       %>
 
       <%= link_to modal_leave_entries_path(date: date.to_s, calendar_start_date: @start_date.to_s, **@layout_params), data: { turbo_frame: "modal_frame" }, class: classes.join(" "), title: [date.strftime("%a %-d %b"), bank_holiday&.title, school_holidays&.map(&:title)&.join(", ")].compact.join(" • ") do %>
-        <div class="day-weekday"><%= CalendarHelper::DAY_NAMES[(date.wday + 6) % 7][0] %></div>
         <%= render "calendar/day_cell_content", date: date, is_today: is_today, entries: entries %>
       <% end %>
     <% end %>
-  </div>
 </div>

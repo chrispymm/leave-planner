@@ -46,4 +46,21 @@ class LeaveRangeTest < ActiveSupport::TestCase
     assert_equal 1, ranges.size
     assert_equal "Mon, 6 Jul 2026 – Tue, 7 Jul 2026", ranges.first.display_title
   end
+
+  test "contiguous? predicate matches the grouping rule used by for_person" do
+    mon = LeaveEntry.new(person: @person, date: Date.new(2026, 7, 6), half_day: "none")
+    tue = LeaveEntry.new(person: @person, date: Date.new(2026, 7, 7), half_day: "none")
+    wed_different_notes = LeaveEntry.new(person: @person, date: Date.new(2026, 7, 8), half_day: "none", notes: "Different")
+    fri = LeaveEntry.new(person: @person, date: Date.new(2026, 7, 10), half_day: "none")
+    mon_next_week = LeaveEntry.new(person: @person, date: Date.new(2026, 7, 13), half_day: "none")
+    sat = LeaveEntry.new(person: @person, date: Date.new(2026, 7, 11), half_day: "none")
+
+    assert LeaveRange.contiguous?(mon, tue)
+    assert_not LeaveRange.contiguous?(tue, wed_different_notes)
+    assert LeaveRange.contiguous?(fri, mon_next_week)
+    assert LeaveRange.contiguous?(fri, sat) # single calendar day gap is always contiguous
+    assert_not LeaveRange.contiguous?(sat, mon_next_week) # 2-day gap, not the Fri->Mon bridge
+    assert_not LeaveRange.contiguous?(nil, tue)
+    assert_not LeaveRange.contiguous?(mon, nil)
+  end
 end

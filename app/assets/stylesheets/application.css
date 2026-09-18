@@ -424,27 +424,31 @@ body {
 
 /* Calendar List Layout: each month as one horizontal row of days, stacked vertically */
 .calendar-list-12 {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-rows: repeat(12, minmax(0, 1fr));
+  grid-template-columns: 1.2rem repeat(31, minmax(0, 1fr));
+  grid-row-gap: 0.5rem;
+  grid-column-gap: 0;
   margin-bottom: 1.5rem;
 }
 
 .month-list-row {
-  display: flex;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
   align-items: stretch;
-  gap: 0.6rem;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   box-sizing: border-box;
+  height: 52px;
 }
 
 .month-list-row.current-month {
-  border: 2px solid var(--bank-holiday-border);
-  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+  border: 1px solid var(--bank-holiday-border);
+  outline: 2px solid var(--bank-holiday-border);
+  /* box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15); */
 }
 
 .month-list-row.past-month {
@@ -452,17 +456,14 @@ body {
 }
 
 .month-list-label {
-  flex-shrink: 0;
-  width: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
+  writing-mode: sideways-lr;
+  text-orientation: mixed;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 0.8rem;
   font-weight: 700;
   color: var(--pico-color);
   border-right: 1px solid var(--border-color);
-  padding-right: 0.6rem;
-  text-align: center;
 }
 
 .month-list-days {
@@ -473,8 +474,38 @@ body {
 }
 
 .day-cell-list {
-  height: 52px;
-  padding: 2px;
+  position: relative;
+  overflow: visible;
+  height: 50px;
+  padding: 0px;
+  border-right: 1px solid var(--border-color);
+}
+
+.day-cell-list:nth-child(32) {
+  border-right: none;
+}
+
+.day-cell-list.today {
+  border: none;
+}
+
+.day-cell-list .day-number {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  top: -3px;
+  left: -3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  /* font-weight: 700; */
+}
+
+.day-cell-list.today .day-number {
+  background-color: var(--today-border);
+  color: #ffffff;
+  border-radius: 50%;
 }
 
 .day-weekday {
@@ -485,17 +516,31 @@ body {
 }
 
 .day-cell-list .day-number {
-  text-align: center;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
 }
 
 .day-cell-list .day-badges {
+  margin-top: 16px;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .day-cell-list .leave-badge {
+  display: block;
+  width: 100%;
   text-align: center;
+  border-radius: 0;
+  font-size: 0.5rem;
+}
+
+.day-cell-list .leave-badge--start {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.day-cell-list .leave-badge--end {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
 }
 
 @media (max-width: 900px) {

@@ -1,5 +1,10 @@
 <turbo-frame id="calendar_frame">
-  <!-- Calendar Controls & Navigation Bar -->
+  
+
+  <div class="calendar-layout-container">
+    <!-- Left Column: 12-Month Calendar Grid -->
+    <div class="calendar-main-col">
+      <!-- Calendar Controls & Navigation Bar -->
   <div class="calendar-controls">
     <div class="calendar-year-navigation">
       <%= link_to "‹", calendar_path(start_date: (@start_date - 1.year).to_s, reset_leave_year_details: 1, **@layout_params), class: "nav-btn secondary outline calendar-year-arrow", title: "Previous year", aria: { label: "Previous year" } %>
@@ -12,9 +17,6 @@
     <% end %>
   </div>
 
-  <div class="calendar-layout-container">
-    <!-- Left Column: 12-Month Calendar Grid -->
-    <div class="calendar-main-col">
       <% if @layout == "list" %>
         <div class="calendar-list-12">
           <% @months.each do |month_date| %>
