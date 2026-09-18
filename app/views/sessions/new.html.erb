@@ -1,0 +1,33 @@
+<div style="max-width: 400px; margin: 3rem auto 0;">
+  <h2 style="margin-bottom: 0.25rem; text-align: center;">Annual Leave Planner</h2>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1.5rem; text-align: center;">Sign in to manage your family's leave.</p>
+
+  <% if flash[:alert] %>
+    <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem;">
+      <%= flash[:alert] %>
+    </article>
+  <% end %>
+  <% if flash[:notice] %>
+    <article style="background-color: #ecfdf5; border-color: #10b981; color: #065f46; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem;">
+      <%= flash[:notice] %>
+    </article>
+  <% end %>
+
+  <%= form_with url: session_path do |form| %>
+    <div>
+      <%= form.label :email_address, "Email" %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "you@example.com", value: params[:email_address] %>
+    </div>
+
+    <div>
+      <%= form.label :password, "Password" %>
+      <%= form.password_field :password, required: true, autocomplete: "current-password", placeholder: "Enter your password", maxlength: 72 %>
+    </div>
+
+    <%= form.submit "Sign in", class: "contrast", style: "width: 100%; margin-top: 0.5rem;" %>
+  <% end %>
+
+  <p style="text-align: center; margin-top: 1rem;">
+    <%= link_to "Forgot password?", new_password_path, style: "font-size: 0.9rem;" %>
+  </p>
+</div>

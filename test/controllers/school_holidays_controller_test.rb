@@ -2,6 +2,7 @@ require "test_helper"
 
 class SchoolHolidaysControllerTest < ActionDispatch::IntegrationTest
   setup do
+    sign_in_as(users(:chris))
     @school_holiday = school_holidays(:summer)
   end
 
@@ -47,5 +48,19 @@ class SchoolHolidaysControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to school_holidays_url
+  end
+
+  test "cannot view, edit, or destroy a school holiday belonging to another family" do
+    other_user = User.create!(email_address: "other@example.com", password: "password")
+    other_family = Family.create!(name: "Other Family", owner: other_user, bank_holiday_division: "scotland")
+    other_holiday = other_family.school_holidays.create!(title: "Secret Holiday", start_date: Date.new(2027, 1, 1), end_date: Date.new(2027, 1, 7))
+
+    get edit_school_holiday_url(other_holiday)
+    assert_response :not_found
+    patch school_holiday_url(other_holiday), params: { school_holiday: { title: "Hacked" } }
+    assert_response :not_found
+    delete school_holiday_url(other_holiday)
+    assert_response :not_found
+    assert_equal "Secret Holiday", other_holiday.reload.title
   end
 end

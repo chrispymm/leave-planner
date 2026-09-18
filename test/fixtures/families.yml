@@ -1,0 +1,6 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+pymm_family:
+  name: The Pymms
+  owner: chris
+  bank_holiday_division: england-and-wales

@@ -2,7 +2,7 @@ class PeopleController < ApplicationController
   before_action :set_person, only: [ :show, :edit, :update, :destroy ]
 
   def index
-    @people = Person.order(:name)
+    @people = Current.family.people.order(:name)
   end
 
   def show
@@ -10,7 +10,7 @@ class PeopleController < ApplicationController
   end
 
   def new
-    @person = Person.new(
+    @person = Current.family.people.new(
       allowance_unit: "days",
       allowance_amount: 25.0,
       hours_per_day: 7.5,
@@ -25,7 +25,7 @@ class PeopleController < ApplicationController
   end
 
   def create
-    @person = Person.new(person_params)
+    @person = Current.family.people.new(person_params)
     if @person.save
       redirect_to people_path, notice: "#{@person.name} was successfully added."
     else
@@ -49,7 +49,7 @@ class PeopleController < ApplicationController
   private
 
   def set_person
-    @person = Person.find(params[:id])
+    @person = Current.family.people.find(params[:id])
   end
 
   def person_params
@@ -69,7 +69,7 @@ class PeopleController < ApplicationController
 
   def sample_color
     colors = %w[#2563eb #db2777 #059669 #7c3aed #ea580c #0891b2 #d97706 #4f46e5]
-    used = Person.pluck(:color)
+    used = Current.family.people.pluck(:color)
     (colors - used).first || colors.sample
   end
 end

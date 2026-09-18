@@ -1,6 +1,6 @@
 class BankHolidaysController < ApplicationController
   def index
-    @division = params[:division].presence || "england-and-wales"
+    @division = params[:division].presence || Current.family.bank_holiday_division
     @year = (params[:year].presence || Date.current.year).to_i
     @bank_holidays = BankHoliday.for_division(@division)
                                 .where("strftime('%Y', date) = ?", @year.to_s)

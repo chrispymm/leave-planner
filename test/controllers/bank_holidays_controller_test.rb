@@ -1,6 +1,10 @@
 require "test_helper"
 
 class BankHolidaysControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    sign_in_as(users(:chris))
+  end
+
   test "should get index" do
     get bank_holidays_url
     assert_response :success

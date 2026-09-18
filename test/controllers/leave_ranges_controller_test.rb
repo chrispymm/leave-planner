@@ -2,6 +2,7 @@ require "test_helper"
 
 class LeaveRangesControllerTest < ActionDispatch::IntegrationTest
   setup do
+    sign_in_as(users(:chris))
     @person = people(:alice)
     @other_person = people(:bob)
     @leave_entry = leave_entries(:alice_vacation)

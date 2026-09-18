@@ -23,6 +23,7 @@
 # Ignore SQLite databases in db directory
 /db/*.sqlite3
 /db/*.sqlite3-*
+/db/backups/
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key

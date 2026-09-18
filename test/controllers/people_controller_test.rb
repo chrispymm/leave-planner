@@ -2,6 +2,7 @@ require "test_helper"
 
 class PeopleControllerTest < ActionDispatch::IntegrationTest
   setup do
+    sign_in_as(users(:chris))
     @person = people(:alice)
   end
 
@@ -105,5 +106,19 @@ class PeopleControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_redirected_to people_url
+  end
+
+  test "cannot view, edit, or destroy a person belonging to another family" do
+    other_user = User.create!(email_address: "other@example.com", password: "password")
+    other_family = Family.create!(name: "Other Family", owner: other_user, bank_holiday_division: "scotland")
+    other_person = other_family.people.create!(name: "Intruder", color: "#000000", allowance_unit: "days", allowance_amount: 25, hours_per_day: 7.5)
+
+    get edit_person_url(other_person)
+    assert_response :not_found
+    patch person_url(other_person), params: { person: { name: "Hacked" } }
+    assert_response :not_found
+    delete person_url(other_person)
+    assert_response :not_found
+    assert_equal "Intruder", other_person.reload.name
   end
 end

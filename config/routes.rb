@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   root "calendar#show"
 
   resource :calendar, only: [ :show ], controller: "calendar"
+  resource :family, only: [ :edit, :update ]
 
   resources :people do
     resources :leave_ranges, only: [ :index, :new, :create ]

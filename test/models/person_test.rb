@@ -9,6 +9,7 @@ class PersonTest < ActiveSupport::TestCase
 
   test "calculates leave in days excluding bank holidays by default" do
     person = Person.create!(
+      family: families(:pymm_family),
       name: "Alice",
       color: "#2563eb",
       allowance_unit: "days",
@@ -32,6 +33,7 @@ class PersonTest < ActiveSupport::TestCase
 
   test "calculates leave in days including bank holidays when toggled" do
     person = Person.create!(
+      family: families(:pymm_family),
       name: "Bob",
       color: "#10b981",
       allowance_unit: "days",
@@ -52,6 +54,7 @@ class PersonTest < ActiveSupport::TestCase
 
   test "calculates leave in hours and custom hours per day" do
     person = Person.create!(
+      family: families(:pymm_family),
       name: "Charlie",
       color: "#f59e0b",
       allowance_unit: "hours",
@@ -71,6 +74,7 @@ class PersonTest < ActiveSupport::TestCase
 
   test "respects custom leave year start day and month" do
     person = Person.create!(
+      family: families(:pymm_family),
       name: "Dana",
       color: "#8b5cf6",
       allowance_unit: "days",
@@ -102,6 +106,7 @@ class PersonTest < ActiveSupport::TestCase
 
   test "handles mid-year starting leave balance and resets on next leave year" do
     person = Person.create!(
+      family: families(:pymm_family),
       name: "Edward",
       color: "#0891b2",
       allowance_unit: "days",

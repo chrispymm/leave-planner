@@ -1,6 +1,16 @@
 require "test_helper"
 
 class CalendarControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    sign_in_as(users(:chris))
+  end
+
+  test "redirects to sign in when not authenticated" do
+    sign_out
+    get root_url
+    assert_redirected_to new_session_path
+  end
+
   test "should get show with default 12 months without top header" do
     travel_to Date.new(2026, 9, 16) do
       get root_url
@@ -39,6 +49,7 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
 
   test "should show an initial balance in its current leave year only" do
     person = Person.create!(
+      family: families(:pymm_family),
       name: "Chris",
       color: "#9333ea",
       allowance_unit: "days",
@@ -93,5 +104,17 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "a[href='#{school_holidays_path}'][data-turbo-frame='_top']"
     assert_select "a[href='#{bank_holidays_path}'][data-turbo-frame='_top']"
+  end
+
+  test "bank holidays shown depend on the family's bank_holiday_division setting" do
+    families(:pymm_family).update!(bank_holiday_division: "england-and-wales")
+    get calendar_url(start_date: "2026-01-01")
+    assert_response :success
+    assert_select "a.day-cell.bank-holiday[href*='date=2026-11-30']", count: 0
+
+    families(:pymm_family).update!(bank_holiday_division: "scotland")
+    get calendar_url(start_date: "2026-01-01")
+    assert_response :success
+    assert_select "a.day-cell.bank-holiday[href*='date=2026-11-30']", count: 1
   end
 end

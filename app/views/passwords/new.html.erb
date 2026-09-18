@@ -1,0 +1,23 @@
+<div style="max-width: 400px; margin: 3rem auto 0;">
+  <h2 style="margin-bottom: 0.25rem; text-align: center;">Forgot your password?</h2>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1.5rem; text-align: center;">We'll email you instructions to reset it.</p>
+
+  <% if flash[:alert] %>
+    <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem;">
+      <%= flash[:alert] %>
+    </article>
+  <% end %>
+
+  <%= form_with url: passwords_path do |form| %>
+    <div>
+      <%= form.label :email_address, "Email" %>
+      <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", placeholder: "you@example.com", value: params[:email_address] %>
+    </div>
+
+    <%= form.submit "Email reset instructions", class: "contrast", style: "width: 100%; margin-top: 0.5rem;" %>
+  <% end %>
+
+  <p style="text-align: center; margin-top: 1rem;">
+    <%= link_to "Back to sign in", new_session_path, style: "font-size: 0.9rem;" %>
+  </p>
+</div>

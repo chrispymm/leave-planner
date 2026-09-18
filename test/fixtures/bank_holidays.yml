@@ -9,3 +9,8 @@ good_friday:
   date: 2026-04-03
   division: england-and-wales
 
+st_andrews_day:
+  title: St Andrew's Day
+  date: 2026-11-30
+  division: scotland
+

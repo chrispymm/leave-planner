@@ -5,15 +5,15 @@ class LeaveEntriesController < ApplicationController
     @date = params[:date].present? ? Date.parse(params[:date]) : Date.current
     @calendar_start_date = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
     @layout = params[:layout] == "list" ? "list" : "grid"
-    @people = Person.order(:name)
+    @people = Current.family.people.order(:name)
 
-    @existing_entries = LeaveEntry.where(date: @date).includes(:person)
+    @existing_entries = LeaveEntry.where(person: @people, date: @date).includes(:person)
 
     render layout: false
   end
 
   def toggle
-    person = Person.find(params[:person_id])
+    person = Current.family.people.find(params[:person_id])
     date = Date.parse(params[:date])
     calendar_start = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
 
@@ -32,7 +32,7 @@ class LeaveEntriesController < ApplicationController
 
   def create
     person_ids = Array(params.dig(:leave_entry, :person_ids)).compact_blank
-    people = Person.where(id: person_ids).order(:name).to_a
+    people = Current.family.people.where(id: person_ids).order(:name).to_a
     if people.empty?
       return redirect_to calendar_path(start_date: params[:calendar_start_date], **calendar_layout_params), alert: "Select at least one person."
     end
@@ -86,7 +86,7 @@ class LeaveEntriesController < ApplicationController
   end
 
   def set_leave_entry
-    @leave_entry = LeaveEntry.find(params[:id])
+    @leave_entry = LeaveEntry.where(person: Current.family.people).find(params[:id])
   end
 
   def leave_entry_params

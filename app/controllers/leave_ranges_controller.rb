@@ -3,8 +3,8 @@ class LeaveRangesController < ApplicationController
   before_action :set_leave_range, only: [ :edit, :update, :destroy ]
 
   def index
-    @people = Person.order(:name)
-    @selected_person = @person || (params[:person_id].present? ? Person.find_by(id: params[:person_id]) : @people.first)
+    @people = Current.family.people.order(:name)
+    @selected_person = @person || (params[:person_id].present? ? @people.find_by(id: params[:person_id]) : @people.first)
 
     if @selected_person
       @leave_ranges = LeaveRange.for_person(@selected_person)
@@ -18,7 +18,7 @@ class LeaveRangesController < ApplicationController
   end
 
   def new
-    @people = Person.order(:name)
+    @people = Current.family.people.order(:name)
     @leave_range = LeaveRange.new(
       person: @person,
       person_id: @person.id,
@@ -31,14 +31,14 @@ class LeaveRangesController < ApplicationController
 
   def create
     @leave_range = LeaveRange.new(leave_range_params)
-    @people = Person.order(:name)
+    @people = Current.family.people.order(:name)
     submitted_person_ids = params.dig(:leave_range, :person_ids)
     person_ids = if submitted_person_ids.nil?
       [ params.dig(:leave_range, :person_id).presence || @person&.id ].compact
     else
       Array(submitted_person_ids).compact_blank
     end
-    selected_people = Person.where(id: person_ids).order(:name).to_a
+    selected_people = Current.family.people.where(id: person_ids).order(:name).to_a
     @leave_range.person_ids = person_ids
     @leave_range.person = selected_people.first
 
@@ -90,7 +90,7 @@ class LeaveRangesController < ApplicationController
     else
       Array(submitted_person_ids).compact_blank
     end
-    selected_people = Person.where(id: person_ids).order(:name).to_a
+    selected_people = Current.family.people.where(id: person_ids).order(:name).to_a
     @leave_range.person_ids = person_ids
 
     if selected_people.empty?
@@ -143,14 +143,15 @@ class LeaveRangesController < ApplicationController
   private
 
   def set_person
-    @person = Person.find_by(id: params[:person_id])
+    @person = Current.family.people.find_by(id: params[:person_id])
   end
 
   def set_leave_range
     # Format of ID: "first_entry_id-last_entry_id"
     first_id, last_id = params[:id].to_s.split("-")
-    first_entry = LeaveEntry.find_by(id: first_id)
-    last_entry = LeaveEntry.find_by(id: last_id) || first_entry
+    scoped_entries = LeaveEntry.where(person: Current.family.people)
+    first_entry = scoped_entries.find_by(id: first_id)
+    last_entry = scoped_entries.find_by(id: last_id) || first_entry
 
     if first_entry.nil? || last_entry.nil? || first_entry.person_id != last_entry.person_id
       redirect_to leave_ranges_path, alert: "Leave range not found."
@@ -170,7 +171,7 @@ class LeaveRangesController < ApplicationController
       @leave_range = LeaveRange.build_range_from_entries(@person, @entries)
     end
 
-    @people = Person.order(:name)
+    @people = Current.family.people.order(:name)
     @leave_range.person_ids = [ @person.id.to_s ]
   end
 
