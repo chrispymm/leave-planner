@@ -1,5 +1,5 @@
 class SchoolHoliday < ApplicationRecord
-  belongs_to :family
+  belongs_to :account
 
   validates :title, presence: true
   validates :start_date, presence: true

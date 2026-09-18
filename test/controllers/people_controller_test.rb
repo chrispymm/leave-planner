@@ -108,10 +108,10 @@ class PeopleControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to people_url
   end
 
-  test "cannot view, edit, or destroy a person belonging to another family" do
+  test "cannot view, edit, or destroy a person belonging to another account" do
     other_user = User.create!(email_address: "other@example.com", password: "password")
-    other_family = Family.create!(name: "Other Family", owner: other_user, bank_holiday_division: "scotland")
-    other_person = other_family.people.create!(name: "Intruder", color: "#000000", allowance_unit: "days", allowance_amount: 25, hours_per_day: 7.5)
+    other_account = Account.create!(name: "Other Account", owner: other_user, bank_holiday_division: "scotland")
+    other_person = other_account.people.create!(name: "Intruder", color: "#000000", allowance_unit: "days", allowance_amount: 25, hours_per_day: 7.5)
 
     get edit_person_url(other_person)
     assert_response :not_found

@@ -1,4 +1,4 @@
-class Family < ApplicationRecord
+class Account < ApplicationRecord
   BANK_HOLIDAY_DIVISIONS = %w[england-and-wales scotland northern-ireland].freeze
 
   belongs_to :owner, class_name: "User"

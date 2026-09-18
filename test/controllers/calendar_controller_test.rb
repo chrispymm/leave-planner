@@ -49,7 +49,7 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
 
   test "should show an initial balance in its current leave year only" do
     person = Person.create!(
-      family: families(:pymm_family),
+      account: accounts(:pymm_account),
       name: "Chris",
       color: "#9333ea",
       allowance_unit: "days",
@@ -107,12 +107,12 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "bank holidays shown depend on the family's bank_holiday_division setting" do
-    families(:pymm_family).update!(bank_holiday_division: "england-and-wales")
+    accounts(:pymm_account).update!(bank_holiday_division: "england-and-wales")
     get calendar_url(start_date: "2026-01-01")
     assert_response :success
     assert_select "a.day-cell.bank-holiday[href*='date=2026-11-30']", count: 0
 
-    families(:pymm_family).update!(bank_holiday_division: "scotland")
+    accounts(:pymm_account).update!(bank_holiday_division: "scotland")
     get calendar_url(start_date: "2026-01-01")
     assert_response :success
     assert_select "a.day-cell.bank-holiday[href*='date=2026-11-30']", count: 1

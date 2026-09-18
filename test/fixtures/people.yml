@@ -1,7 +1,7 @@
 # People fixtures
 alice:
   name: Alice
-  family: pymm_family
+  account: pymm_account
   color: "#2563eb"
   allowance_unit: "days"
   allowance_amount: 25.0
@@ -12,7 +12,7 @@ alice:
 
 bob:
   name: Bob
-  family: pymm_family
+  account: pymm_account
   color: "#10b981"
   allowance_unit: "hours"
   allowance_amount: 187.5

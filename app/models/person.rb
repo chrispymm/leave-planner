@@ -1,5 +1,5 @@
 class Person < ApplicationRecord
-  belongs_to :family
+  belongs_to :account
   has_many :leave_entries, dependent: :destroy
 
   before_validation :set_default_initial_allowance_date

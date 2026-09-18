@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   root "calendar#show"
 
   resource :calendar, only: [ :show ], controller: "calendar"
-  resource :family, only: [ :edit, :update ]
+  resource :account, only: [ :edit, :update ]
 
   resources :people do
     resources :leave_ranges, only: [ :index, :new, :create ]

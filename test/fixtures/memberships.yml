@@ -2,8 +2,8 @@
 
 chris_membership:
   user: chris
-  family: pymm_family
+  account: pymm_account
 
 jess_membership:
   user: jess
-  family: pymm_family
+  account: pymm_account

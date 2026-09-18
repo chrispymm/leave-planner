@@ -50,10 +50,10 @@ class SchoolHolidaysControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to school_holidays_url
   end
 
-  test "cannot view, edit, or destroy a school holiday belonging to another family" do
+  test "cannot view, edit, or destroy a school holiday belonging to another account" do
     other_user = User.create!(email_address: "other@example.com", password: "password")
-    other_family = Family.create!(name: "Other Family", owner: other_user, bank_holiday_division: "scotland")
-    other_holiday = other_family.school_holidays.create!(title: "Secret Holiday", start_date: Date.new(2027, 1, 1), end_date: Date.new(2027, 1, 7))
+    other_account = Account.create!(name: "Other Account", owner: other_user, bank_holiday_division: "scotland")
+    other_holiday = other_account.school_holidays.create!(title: "Secret Holiday", start_date: Date.new(2027, 1, 1), end_date: Date.new(2027, 1, 7))
 
     get edit_school_holiday_url(other_holiday)
     assert_response :not_found

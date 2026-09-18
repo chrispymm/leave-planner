@@ -2,11 +2,11 @@ class SchoolHolidaysController < ApplicationController
   before_action :set_school_holiday, only: [ :edit, :update, :destroy ]
 
   def index
-    @school_holidays = Current.family.school_holidays.order(:start_date)
+    @school_holidays = Current.account.school_holidays.order(:start_date)
   end
 
   def new
-    @school_holiday = Current.family.school_holidays.new(
+    @school_holiday = Current.account.school_holidays.new(
       start_date: Date.current,
       end_date: Date.current + 7.days,
       color: "#f59e0b"
@@ -17,7 +17,7 @@ class SchoolHolidaysController < ApplicationController
   end
 
   def create
-    @school_holiday = Current.family.school_holidays.new(school_holiday_params)
+    @school_holiday = Current.account.school_holidays.new(school_holiday_params)
     if @school_holiday.save
       redirect_to school_holidays_path, notice: "#{@school_holiday.title} was created."
     else
@@ -41,7 +41,7 @@ class SchoolHolidaysController < ApplicationController
   private
 
   def set_school_holiday
-    @school_holiday = Current.family.school_holidays.find(params[:id])
+    @school_holiday = Current.account.school_holidays.find(params[:id])
   end
 
   def school_holiday_params

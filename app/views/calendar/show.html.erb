@@ -16,7 +16,7 @@
       <% if @people.any? %>
         <%= link_to "📅 Book Range", modal_leave_entries_path(date: @start_date.to_s, calendar_start_date: @start_date.to_s, **@layout_params), data: { turbo_frame: "modal_frame" }, role: "button", class: "nav-btn", style: "background-color: #0284c7; border-color: #0284c7; color: white;" %>
       <% end %>
-      <%= link_to "⚙️", edit_family_path, data: { turbo_frame: "_top" }, role: "button", class: "nav-btn secondary outline", title: "Family settings", aria: { label: "Family settings" } %>
+      <%= link_to "⚙️", edit_account_path, data: { turbo_frame: "_top" }, role: "button", class: "nav-btn secondary outline", title: "Account settings", aria: { label: "Account settings" } %>
       <%= link_to "Sign out", session_path, data: { turbo_method: :delete, turbo_frame: "_top" }, role: "button", class: "nav-btn secondary outline" %>
     </div>
   </div>

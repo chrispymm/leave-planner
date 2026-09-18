@@ -6,7 +6,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal("downcased@example.com", user.email_address)
   end
 
-  test "#family returns the user's family via membership" do
-    assert_equal families(:pymm_family), users(:chris).family
+  test "#account returns the user's account via membership" do
+    assert_equal accounts(:pymm_account), users(:chris).account
   end
 end

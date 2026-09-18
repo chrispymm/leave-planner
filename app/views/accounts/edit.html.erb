@@ -1,13 +1,13 @@
 <div style="max-width: 650px; margin: 0 auto;">
-  <h2 style="margin-bottom: 0.5rem;">Family Settings</h2>
-  <p style="color: var(--pico-muted-color); margin-bottom: 1.5rem;">These settings apply to everyone with access to <strong><%= @family.name %></strong>.</p>
+  <h2 style="margin-bottom: 0.5rem;">Account Settings</h2>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1.5rem;">These settings apply to everyone with access to <strong><%= @account.name %></strong>.</p>
 
-  <%= form_with(model: @family, url: family_path, method: :patch, local: true) do |f| %>
-    <% if @family.errors.any? %>
+  <%= form_with(model: @account, url: account_path, method: :patch, local: true) do |f| %>
+    <% if @account.errors.any? %>
       <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
-        <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(@family.errors.count, "error") %> prohibited this from being saved:</h4>
+        <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(@account.errors.count, "error") %> prohibited this from being saved:</h4>
         <ul>
-          <% @family.errors.full_messages.each do |message| %>
+          <% @account.errors.full_messages.each do |message| %>
             <li><%= message %></li>
           <% end %>
         </ul>
@@ -15,7 +15,7 @@
     <% end %>
 
     <div>
-      <%= f.label :name, "Family Name" %>
+      <%= f.label :name, "Account Name" %>
       <%= f.text_field :name, required: true %>
     </div>
 
@@ -24,7 +24,7 @@
       <%= f.select :bank_holiday_division,
             options_for_select(
               [ [ "England & Wales", "england-and-wales" ], [ "Scotland", "scotland" ], [ "Northern Ireland", "northern-ireland" ] ],
-              @family.bank_holiday_division
+              @account.bank_holiday_division
             ) %>
       <small>Controls which bank holidays are shown and counted on the calendar.</small>
     </div>
