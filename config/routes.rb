@@ -4,7 +4,14 @@ Rails.application.routes.draw do
   root "calendar#show"
 
   resource :calendar, only: [ :show ], controller: "calendar"
-  resource :account, only: [ :edit, :update ]
+  resource :account, only: [ :edit, :update ] do
+    resources :invitations, only: [ :new, :create, :destroy ]
+    resources :memberships, only: [ :destroy ]
+  end
+  resource :profile, only: [ :edit, :update ]
+
+  get "invitations/:token/accept", to: "invitation_acceptances#show", as: :accept_invitation
+  post "invitations/:token/accept", to: "invitation_acceptances#create", as: :accept_invitation_create
 
   resources :people do
     resources :leave_ranges, only: [ :index, :new, :create ]

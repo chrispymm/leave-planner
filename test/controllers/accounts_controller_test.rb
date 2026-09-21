@@ -11,6 +11,23 @@ class AccountsControllerTest < ActionDispatch::IntegrationTest
     assert_select "select#account_bank_holiday_division"
   end
 
+  test "lists members with an edit link only for the current user, and a remove button for the owner" do
+    get edit_account_url
+    assert_response :success
+
+    assert_select "body", /#{users(:chris).email_address}/
+    assert_select "body", /#{users(:jess).email_address}/
+    assert_select "a[href=?]", edit_profile_path, text: "Edit"
+    assert_select "form[action=?]", account_membership_path(memberships(:jess_membership))
+  end
+
+  test "does not show a remove button to a non-owner" do
+    sign_in_as(users(:jess))
+    get edit_account_url
+    assert_response :success
+    assert_select "form[action=?]", account_membership_path(memberships(:chris_membership)), false
+  end
+
   test "should update account name and bank holiday division" do
     patch account_url, params: { account: { name: "The Pymm Household", bank_holiday_division: "scotland" } }
     assert_redirected_to edit_account_path

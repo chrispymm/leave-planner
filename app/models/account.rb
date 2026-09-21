@@ -6,6 +6,7 @@ class Account < ApplicationRecord
   has_many :users, through: :memberships
   has_many :people, dependent: :destroy
   has_many :school_holidays, dependent: :destroy
+  has_many :invitations, dependent: :destroy
 
   validates :name, presence: true
   validates :bank_holiday_division, inclusion: { in: BANK_HOLIDAY_DIVISIONS }

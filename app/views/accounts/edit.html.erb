@@ -34,4 +34,59 @@
       <%= link_to "Cancel", root_path, role: "button", class: "secondary outline" %>
     </div>
   <% end %>
+
+  <hr style="margin: 2rem 0;">
+
+  <% if flash[:invite_link] %>
+    <article style="background-color: #ecfdf5; border-color: #10b981; color: #065f46; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+      <strong>Share this invite link (valid for 48 hours):</strong>
+      <p style="word-break: break-all; margin: 0.5rem 0 0;"><%= link_to flash[:invite_link], flash[:invite_link] %></p>
+    </article>
+  <% end %>
+
+  <h3 style="margin-bottom: 0.5rem;">Members</h3>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1rem;">Everyone listed here can view and manage all people, leave, and school holidays on this account.</p>
+
+  <table role="grid">
+    <tbody>
+      <% @memberships.each do |membership| %>
+        <tr>
+          <td>
+            <%= membership.user.email_address %>
+            <% if membership.user == Current.user %> <small>(you)</small><% end %>
+            <% if membership.user == @account.owner %> <small>&middot; Owner</small><% end %>
+          </td>
+          <td style="text-align: right; white-space: nowrap;">
+            <% if membership.user == Current.user %>
+              <%= link_to "Edit", edit_profile_path, role: "button", class: "outline secondary" %>
+            <% end %>
+            <% if Current.user == @account.owner && membership.user != @account.owner %>
+              <%= button_to "Remove", account_membership_path(membership), method: :delete, class: "outline contrast", data: { turbo_confirm: "Remove #{membership.user.email_address} from this account?" } %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @invitations.any? %>
+    <h4 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Pending Invitations</h4>
+    <table role="grid">
+      <tbody>
+        <% @invitations.each do |invitation| %>
+          <tr>
+            <td>
+              <%= invitation.email %>
+              <small>&middot; expires <%= invitation.expires_at.strftime("%d %b %Y %H:%M") %></small>
+            </td>
+            <td style="text-align: right;">
+              <%= button_to "Cancel", account_invitation_path(invitation), method: :delete, class: "outline contrast", data: { turbo_confirm: "Cancel this invitation?" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <%= link_to "Invite a member", new_account_invitation_path, role: "button", class: "secondary outline", style: "margin-top: 1rem;" %>
 </div>

@@ -1,4 +1,6 @@
 class AccountsController < ApplicationController
+  before_action :set_members_and_invitations, only: %i[ edit update ]
+
   def edit
     @account = Current.account
   end
@@ -13,6 +15,12 @@ class AccountsController < ApplicationController
   end
 
   private
+
+  def set_members_and_invitations
+    @account = Current.account
+    @memberships = @account.memberships.includes(:user).order(:id)
+    @invitations = @account.invitations.pending.order(:created_at)
+  end
 
   def account_params
     params.require(:account).permit(:name, :bank_holiday_division)

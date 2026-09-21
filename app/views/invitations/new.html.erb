@@ -1,0 +1,30 @@
+<div style="max-width: 500px; margin: 0 auto;">
+  <h2 style="margin-bottom: 0.5rem;">Invite a Member</h2>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1.5rem;">
+    We'll generate a one-time link valid for 48 hours. Since this app doesn't send email yet,
+    you'll need to copy the link and share it yourself (e.g. by text or WhatsApp).
+  </p>
+
+  <%= form_with(model: @invitation, url: account_invitations_path, local: true) do |f| %>
+    <% if @invitation.errors.any? %>
+      <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+        <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(@invitation.errors.count, "error") %> prohibited this from being saved:</h4>
+        <ul>
+          <% @invitation.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </article>
+    <% end %>
+
+    <div>
+      <%= f.label :email, "Email address" %>
+      <%= f.email_field :email, required: true %>
+    </div>
+
+    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+      <%= f.submit "Create Invite Link", class: "contrast" %>
+      <%= link_to "Cancel", edit_account_path, role: "button", class: "secondary outline" %>
+    </div>
+  <% end %>
+</div>

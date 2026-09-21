@@ -1,0 +1,30 @@
+<div style="max-width: 400px; margin: 3rem auto 0;">
+  <h2 style="margin-bottom: 0.25rem; text-align: center;">Accept Invitation</h2>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1.25rem; text-align: center;">
+    Set a password to finish creating your account for <strong><%= @invitation.email %></strong>.
+  </p>
+
+  <% if @user&.errors&.any? %>
+    <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem;">
+      <ul style="margin: 0;">
+        <% @user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </article>
+  <% end %>
+
+  <%= form_with url: accept_invitation_create_path(@invitation.token), method: :post do |form| %>
+    <div>
+      <%= form.label :password, "Password" %>
+      <%= form.password_field :password, required: true, autocomplete: "new-password", placeholder: "Choose a password", maxlength: 72 %>
+    </div>
+
+    <div>
+      <%= form.label :password_confirmation, "Confirm password" %>
+      <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", placeholder: "Repeat password", maxlength: 72 %>
+    </div>
+
+    <%= form.submit "Create Account", class: "contrast", style: "width: 100%; margin-top: 0.5rem;" %>
+  <% end %>
+</div>

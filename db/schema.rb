@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_150641) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_18_152248) do
   create_table "accounts", force: :cascade do |t|
     t.string "bank_holiday_division", default: "england-and-wales", null: false
     t.datetime "created_at", null: false
@@ -29,6 +29,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_150641) do
     t.datetime "updated_at", null: false
     t.index ["date", "division"], name: "index_bank_holidays_on_date_and_division", unique: true
     t.index ["date"], name: "index_bank_holidays_on_date"
+  end
+
+  create_table "invitations", force: :cascade do |t|
+    t.datetime "accepted_at"
+    t.integer "account_id", null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.datetime "expires_at", null: false
+    t.integer "invited_by_id", null: false
+    t.string "token", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_invitations_on_account_id"
+    t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
+    t.index ["token"], name: "index_invitations_on_token", unique: true
   end
 
   create_table "leave_entries", force: :cascade do |t|
@@ -104,6 +118,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_150641) do
   end
 
   add_foreign_key "accounts", "users", column: "owner_id"
+  add_foreign_key "invitations", "accounts"
+  add_foreign_key "invitations", "users", column: "invited_by_id"
   add_foreign_key "leave_entries", "people", on_delete: :cascade
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
