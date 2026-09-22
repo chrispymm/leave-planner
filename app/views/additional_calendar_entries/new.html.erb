@@ -1,0 +1,9 @@
+<div style="max-width: 650px; margin: 0 auto;">
+  <h2 style="margin-bottom: 0.5rem;">Add Entry to <%= @additional_calendar.name %></h2>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1.5rem;">Specify a single date or a date range.</p>
+
+  <%= render "form",
+        additional_calendar: @additional_calendar,
+        additional_calendar_entry: @additional_calendar_entry,
+        form_url: additional_calendar_additional_calendar_entries_path(@additional_calendar) %>
+</div>

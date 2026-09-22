@@ -19,7 +19,10 @@ Rails.application.routes.draw do
   end
 
   resources :leave_ranges, only: [ :index, :edit, :update, :destroy ]
-  resources :school_holidays
+  resources :additional_calendars do
+    resources :additional_calendar_entries, only: [ :new, :create ]
+  end
+  resources :additional_calendar_entries, only: [ :edit, :update, :destroy ]
   resources :bank_holidays, only: [ :index ] do
     collection do
       post :sync

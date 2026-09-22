@@ -1,0 +1,51 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h2 style="margin-bottom: 0.25rem;">Calendars</h2>
+    <p style="color: var(--pico-muted-color); margin-bottom: 0;">Your own sets of dates — school holidays, term dates, anything else — marked on your leave calendar.</p>
+  </div>
+  <div>
+    <%= link_to "+ Add Calendar", new_additional_calendar_path, role: "button" %>
+  </div>
+</div>
+
+<% if @additional_calendars.empty? %>
+  <article style="text-align: center; padding: 3rem 1rem;">
+    <h3>No calendars yet</h3>
+    <p>Create a calendar to group related dates together and show them against your leave.</p>
+    <%= link_to "Add Calendar", new_additional_calendar_path, role: "button" %>
+  </article>
+<% else %>
+  <div style="overflow-x: auto;">
+    <table role="grid">
+      <thead>
+        <tr>
+          <th>Calendar</th>
+          <th>Description</th>
+          <th>Entries</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @additional_calendars.each do |calendar| %>
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <%= calendar_color_swatch(calendar.color) %>
+                <%= link_to calendar.name, additional_calendar_path(calendar), style: "font-weight: 600;" %>
+              </div>
+            </td>
+            <td><%= calendar.description.presence || "-" %></td>
+            <td><%= pluralize(calendar.entries_count, "entry", plural: "entries") %></td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.5rem;">
+                <%= link_to "View", additional_calendar_path(calendar), role: "button", class: "secondary outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+                <%= link_to "Edit", edit_additional_calendar_path(calendar), role: "button", class: "secondary outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+                <%= button_to "Delete", additional_calendar_path(calendar), method: :delete, data: { turbo_confirm: "Delete #{calendar.name} and all of its entries?" }, class: "contrast outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

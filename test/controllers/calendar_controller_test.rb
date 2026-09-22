@@ -132,7 +132,8 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
       assert_select "a[href='#{person_leave_ranges_path(person)}'][data-turbo-frame='_top']", text: person.name
     end
 
-    assert_select "a[href='#{school_holidays_path}'][data-turbo-frame='_top']"
+    assert_select "a[href='#{additional_calendars_path}'][data-turbo-frame='_top']"
+    assert_select "a[href='#{additional_calendar_path(additional_calendars(:school_holidays))}'][data-turbo-frame='_top']"
     assert_select "a[href='#{bank_holidays_path}'][data-turbo-frame='_top']"
   end
 
@@ -146,5 +147,49 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
     get calendar_url(start_date: "2026-01-01")
     assert_response :success
     assert_select "a.day-cell.bank-holiday[href*='date=2026-11-30']", count: 1
+  end
+  test "additional calendar entries render with their calendar's colour in the grid layout" do
+    users(:chris).update!(calendar_layout: "grid")
+    get calendar_url(start_date: "2026-10-01")
+
+    assert_response :success
+    assert_select "a.day-cell.additional-calendar-day[href*='date=2026-10-27']" do |cells|
+      style = cells.first["style"]
+      assert_includes style, additional_calendars(:school_holidays).color
+      assert_includes style, additional_calendars(:swimming).color
+    end
+  end
+
+  test "a day in a single calendar gets only that calendar's colour" do
+    get calendar_url(start_date: "2026-10-01")
+
+    assert_select "a.day-cell.additional-calendar-day[href*='date=2026-10-30']" do |cells|
+      style = cells.first["style"]
+      assert_includes style, additional_calendars(:school_holidays).color
+      assert_not_includes style, additional_calendars(:swimming).color
+    end
+  end
+
+  test "days outside any additional calendar carry no band" do
+    get calendar_url(start_date: "2026-10-01")
+
+    assert_select "a.day-cell.additional-calendar-day[href*='date=2026-10-05']", count: 0
+  end
+
+  test "additional calendar entries render in the list layout too" do
+    users(:chris).update!(calendar_layout: "list")
+    get calendar_url(start_date: "2026-10-01")
+
+    assert_response :success
+    assert_select ".month-list-row a.day-cell.additional-calendar-day[href*='date=2026-10-27']" do |cells|
+      assert_includes cells.first["style"], additional_calendars(:swimming).color
+    end
+  end
+
+  test "legend lists each additional calendar" do
+    get root_url
+
+    assert_select ".legend-bar", text: /School Holidays/
+    assert_select ".legend-bar", text: /Swimming Lessons/
   end
 end

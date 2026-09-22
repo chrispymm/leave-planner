@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_21_223146) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_091927) do
   create_table "accounts", force: :cascade do |t|
     t.string "bank_holiday_division", default: "england-and-wales", null: false
     t.datetime "created_at", null: false
@@ -18,6 +18,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_223146) do
     t.integer "owner_id", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_accounts_on_owner_id"
+  end
+
+  create_table "additional_calendar_entries", force: :cascade do |t|
+    t.integer "additional_calendar_id", null: false
+    t.datetime "created_at", null: false
+    t.date "end_date", null: false
+    t.text "notes"
+    t.date "start_date", null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.index ["additional_calendar_id"], name: "index_additional_calendar_entries_on_additional_calendar_id"
+    t.index ["end_date"], name: "index_additional_calendar_entries_on_end_date"
+    t.index ["start_date"], name: "index_additional_calendar_entries_on_start_date"
+  end
+
+  create_table "additional_calendars", force: :cascade do |t|
+    t.integer "account_id", null: false
+    t.string "color", default: "#f59e0b", null: false
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "name"], name: "index_additional_calendars_on_account_id_and_name", unique: true
+    t.index ["account_id"], name: "index_additional_calendars_on_account_id"
   end
 
   create_table "bank_holidays", force: :cascade do |t|
@@ -86,20 +110,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_223146) do
     t.index ["account_id"], name: "index_people_on_account_id"
   end
 
-  create_table "school_holidays", force: :cascade do |t|
-    t.integer "account_id", null: false
-    t.string "color", default: "#f59e0b", null: false
-    t.datetime "created_at", null: false
-    t.date "end_date", null: false
-    t.text "notes"
-    t.date "start_date", null: false
-    t.string "title", null: false
-    t.datetime "updated_at", null: false
-    t.index ["account_id"], name: "index_school_holidays_on_account_id"
-    t.index ["end_date"], name: "index_school_holidays_on_end_date"
-    t.index ["start_date"], name: "index_school_holidays_on_start_date"
-  end
-
   create_table "sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "ip_address"
@@ -119,12 +129,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_21_223146) do
   end
 
   add_foreign_key "accounts", "users", column: "owner_id"
+  add_foreign_key "additional_calendar_entries", "additional_calendars"
+  add_foreign_key "additional_calendars", "accounts"
   add_foreign_key "invitations", "accounts"
   add_foreign_key "invitations", "users", column: "invited_by_id"
   add_foreign_key "leave_entries", "people", on_delete: :cascade
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
   add_foreign_key "people", "accounts"
-  add_foreign_key "school_holidays", "accounts"
   add_foreign_key "sessions", "users"
 end

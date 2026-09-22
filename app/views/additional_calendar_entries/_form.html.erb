@@ -1,0 +1,38 @@
+<%= form_with(model: additional_calendar_entry, url: form_url, local: true, data: { controller: "date-range" }) do |f| %>
+  <% if additional_calendar_entry.errors.any? %>
+    <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+      <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(additional_calendar_entry.errors.count, "error") %> prohibited this entry from being saved:</h4>
+      <ul>
+        <% additional_calendar_entry.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </article>
+  <% end %>
+
+  <div>
+    <%= f.label :title, "Entry Name / Description" %>
+    <%= f.text_field :title, required: true, placeholder: "e.g. Summer Holidays 2026 or October Half Term" %>
+  </div>
+
+  <div class="grid" style="margin-top: 1rem;">
+    <div>
+      <%= f.label :start_date, "Start Date" %>
+      <%= f.date_field :start_date, required: true, data: { date_range_target: "startDate", action: "change->date-range#startDateChanged input->date-range#startDateChanged" } %>
+    </div>
+    <div>
+      <%= f.label :end_date, "End Date" %>
+      <%= f.date_field :end_date, min: additional_calendar_entry.start_date&.to_s, required: true, data: { date_range_target: "endDate" } %>
+    </div>
+  </div>
+
+  <div style="margin-top: 1rem;">
+    <%= f.label :notes, "Notes (Optional)" %>
+    <%= f.text_field :notes, placeholder: "e.g. Inset day on first Monday" %>
+  </div>
+
+  <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+    <%= f.submit additional_calendar_entry.new_record? ? "Add Entry" : "Save Entry", class: "contrast" %>
+    <%= link_to "Cancel", additional_calendar_path(additional_calendar), role: "button", class: "secondary outline" %>
+  </div>
+<% end %>

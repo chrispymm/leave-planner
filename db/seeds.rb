@@ -45,51 +45,30 @@ if account.people.none?
   )
 end
 
-# Seed typical UK School Holidays if none exist
-if account.school_holidays.none?
-  puts "Creating sample UK school holidays..."
+# Seed a sample School Holidays calendar if the account has no calendars yet
+if account.additional_calendars.none?
+  puts "Creating sample School Holidays calendar..."
+  calendar = account.additional_calendars.create!(
+    name: "School Holidays",
+    description: "School terms and holiday dates",
+    color: "#f59e0b"
+  )
+
   current_year = Date.current.year
   [ current_year, current_year + 1 ].each do |year|
-    account.school_holidays.create!(
-      title: "February Half Term #{year}",
-      start_date: Date.new(year, 2, 16),
-      end_date: Date.new(year, 2, 20),
-      color: "#f59e0b"
-    )
-
-    account.school_holidays.create!(
-      title: "Easter Holidays #{year}",
-      start_date: Date.new(year, 3, 30),
-      end_date: Date.new(year, 4, 10),
-      color: "#f59e0b"
-    )
-
-    account.school_holidays.create!(
-      title: "May Half Term #{year}",
-      start_date: Date.new(year, 5, 25),
-      end_date: Date.new(year, 5, 29),
-      color: "#f59e0b"
-    )
-
-    account.school_holidays.create!(
-      title: "Summer Holidays #{year}",
-      start_date: Date.new(year, 7, 23),
-      end_date: Date.new(year, 9, 2),
-      color: "#f59e0b"
-    )
-
-    account.school_holidays.create!(
-      title: "October Half Term #{year}",
-      start_date: Date.new(year, 10, 26),
-      end_date: Date.new(year, 10, 30),
-      color: "#f59e0b"
-    )
-
-    account.school_holidays.create!(
-      title: "Christmas Holidays #{year}",
-      start_date: Date.new(year, 12, 21),
-      end_date: Date.new(year + 1, 1, 1),
-      color: "#f59e0b"
-    )
+    [
+      [ "February Half Term #{year}", Date.new(year, 2, 16), Date.new(year, 2, 20) ],
+      [ "Easter Holidays #{year}", Date.new(year, 3, 30), Date.new(year, 4, 10) ],
+      [ "May Half Term #{year}", Date.new(year, 5, 25), Date.new(year, 5, 29) ],
+      [ "Summer Holidays #{year}", Date.new(year, 7, 23), Date.new(year, 9, 2) ],
+      [ "October Half Term #{year}", Date.new(year, 10, 26), Date.new(year, 10, 30) ],
+      [ "Christmas Holidays #{year}", Date.new(year, 12, 21), Date.new(year + 1, 1, 1) ]
+    ].each do |title, start_date, end_date|
+      calendar.additional_calendar_entries.create!(
+        title: title,
+        start_date: start_date,
+        end_date: end_date
+      )
+    end
   end
 end

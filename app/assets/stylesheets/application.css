@@ -7,7 +7,6 @@
   --weekend-bg: #f1f5f9;
   --bank-holiday-bg: #e0f2fe;
   --bank-holiday-border: #0284c7;
-  --school-holiday-border: #f59e0b;
   --today-border: #ef4444;
 }
 
@@ -509,12 +508,9 @@ body {
   border-color: var(--bank-holiday-border);
 }
 
-.day-cell.school-holiday {
-  box-shadow: inset 0 -3px 0 0 var(--school-holiday-border);
-}
-
-.day-cell.bank-holiday.school-holiday {
-  box-shadow: inset 0 -3px 0 0 var(--school-holiday-border);
+/* Colour bands come from each calendar's own colour, set inline per day. */
+.day-cell.additional-calendar-day {
+  padding-bottom: 4px;
 }
 
 .day-number {

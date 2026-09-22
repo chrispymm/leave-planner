@@ -5,7 +5,8 @@ class Account < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
   has_many :people, dependent: :destroy
-  has_many :school_holidays, dependent: :destroy
+  has_many :additional_calendars, dependent: :destroy
+  has_many :additional_calendar_entries, through: :additional_calendars
   has_many :invitations, dependent: :destroy
 
   validates :name, presence: true

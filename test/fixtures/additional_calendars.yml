@@ -1,0 +1,12 @@
+# Additional Calendar fixtures
+school_holidays:
+  account: pymm_account
+  name: School Holidays
+  description: School terms and holiday dates
+  color: "#f59e0b"
+
+swimming:
+  account: pymm_account
+  name: Swimming Lessons
+  description: Weekly swimming club
+  color: "#0284c7"

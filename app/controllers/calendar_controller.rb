@@ -19,7 +19,8 @@ class CalendarController < ApplicationController
     division = Current.account.bank_holiday_division
     @bank_holidays_map = BankHoliday.map_by_date(@window_start, @window_end, division)
     @bank_holidays_set = BankHoliday.dates_set(@window_start, @window_end, division)
-    @school_holidays_map = Current.account.school_holidays.map_by_date(@window_start, @window_end)
+    @additional_calendar_entries_map = Current.account.additional_calendar_entries.map_by_date(@window_start, @window_end)
+    @additional_calendars = Current.account.additional_calendars.alphabetical
     @leave_entries_by_date = LeaveEntry.where(person: @people, date: @window_start..@window_end).includes(:person).group_by(&:date)
   end
 end

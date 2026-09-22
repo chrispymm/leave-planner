@@ -1,0 +1,19 @@
+# Additional Calendar Entry fixtures
+summer:
+  additional_calendar: school_holidays
+  title: Summer Holidays
+  start_date: 2026-07-23
+  end_date: 2026-09-02
+
+half_term:
+  additional_calendar: school_holidays
+  title: Autumn Half Term
+  start_date: 2026-10-26
+  end_date: 2026-10-30
+
+swimming_block:
+  additional_calendar: swimming
+  title: Autumn Swimming Block
+  start_date: 2026-10-26
+  end_date: 2026-10-28
+  notes: Pool closed on the Thursday

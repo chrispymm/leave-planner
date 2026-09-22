@@ -15,17 +15,17 @@
         is_weekend = date.saturday? || date.sunday?
         is_today = (date == Date.current)
         bank_holiday = @bank_holidays_map[date]
-        school_holidays = @school_holidays_map[date]
+        calendar_entries = @additional_calendar_entries_map[date]
         entries = @leave_entries_by_date[date] || []
 
         classes = ["day-cell", "day-cell-list"]
         classes << "weekend" if is_weekend
         classes << "today" if is_today
         classes << "bank-holiday" if bank_holiday
-        classes << "school-holiday" if school_holidays.present?
+        classes << "additional-calendar-day" if calendar_entries.present?
       %>
 
-      <%= link_to modal_leave_entries_path(date: date.to_s, calendar_start_date: @start_date.to_s), data: { turbo_frame: "modal_frame" }, class: classes.join(" "), title: [date.strftime("%a %-d %b"), bank_holiday&.title, school_holidays&.map(&:title)&.join(", ")].compact.join(" • ") do %>
+      <%= link_to modal_leave_entries_path(date: date.to_s, calendar_start_date: @start_date.to_s), data: { turbo_frame: "modal_frame" }, class: classes.join(" "), style: additional_calendar_band_style(calendar_entries), title: [date.strftime("%a %-d %b"), bank_holiday&.title, calendar_entries&.map(&:title)&.presence&.join(", ")].compact.join(" • ") do %>
         <%= render "calendar/day_cell_content", date: date, is_today: is_today, entries: entries %>
       <% end %>
     <% end %>

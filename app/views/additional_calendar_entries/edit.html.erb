@@ -1,0 +1,9 @@
+<div style="max-width: 650px; margin: 0 auto;">
+  <h2 style="margin-bottom: 0.5rem;">Edit <%= @additional_calendar_entry.title %></h2>
+  <p style="color: var(--pico-muted-color); margin-bottom: 1.5rem;">Update the date range or details.</p>
+
+  <%= render "form",
+        additional_calendar: @additional_calendar,
+        additional_calendar_entry: @additional_calendar_entry,
+        form_url: additional_calendar_entry_path(@additional_calendar_entry) %>
+</div>

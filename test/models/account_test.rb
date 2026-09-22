@@ -15,17 +15,21 @@ class AccountTest < ActiveSupport::TestCase
     assert account.valid?
   end
 
-  test "has many people and school holidays, destroyed when account is destroyed" do
+  test "has many people and additional calendars, destroyed when account is destroyed" do
     account = accounts(:pymm_account)
     account.people.create!(name: "Zara", color: "#123456", allowance_unit: "days", allowance_amount: 25, hours_per_day: 7.5)
-    account.school_holidays.create!(title: "Summer", start_date: Date.new(2026, 7, 1), end_date: Date.new(2026, 8, 1))
 
     person_ids = account.people.pluck(:id)
-    holiday_ids = account.school_holidays.pluck(:id)
+    calendar_ids = account.additional_calendars.pluck(:id)
+    entry_ids = account.additional_calendar_entries.pluck(:id)
+
+    assert_not_empty calendar_ids
+    assert_not_empty entry_ids
 
     account.destroy
 
     assert_empty Person.where(id: person_ids)
-    assert_empty SchoolHoliday.where(id: holiday_ids)
+    assert_empty AdditionalCalendar.where(id: calendar_ids)
+    assert_empty AdditionalCalendarEntry.where(id: entry_ids)
   end
 end

@@ -1,0 +1,35 @@
+<%= form_with(model: additional_calendar, local: true) do |f| %>
+  <% if additional_calendar.errors.any? %>
+    <article style="background-color: var(--pico-del-color, #fee2e2); border-color: #ef4444; color: #991b1b; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+      <h4 style="color: #991b1b; margin-bottom: 0.5rem;"><%= pluralize(additional_calendar.errors.count, "error") %> prohibited this calendar from being saved:</h4>
+      <ul>
+        <% additional_calendar.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </article>
+  <% end %>
+
+  <div>
+    <%= f.label :name, "Calendar Name" %>
+    <%= f.text_field :name, required: true, placeholder: "e.g. School Holidays" %>
+  </div>
+
+  <div style="margin-top: 1rem;">
+    <%= f.label :description, "Short Description (Optional)" %>
+    <%= f.text_field :description, placeholder: "e.g. School terms and holiday dates" %>
+  </div>
+
+  <div style="margin-top: 1rem; max-width: 20rem;">
+    <%= f.label :color, "Highlight Band Color" %>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <%= f.color_field :color, style: "height: 2.75rem; width: 4rem; padding: 0.2rem; cursor: pointer;" %>
+      <%= f.text_field :color, placeholder: AdditionalCalendar::DEFAULT_COLOR, style: "flex: 1;" %>
+    </div>
+  </div>
+
+  <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+    <%= f.submit additional_calendar.new_record? ? "Add Calendar" : "Save Calendar", class: "contrast" %>
+    <%= link_to "Cancel", additional_calendar.new_record? ? additional_calendars_path : additional_calendar_path(additional_calendar), role: "button", class: "secondary outline" %>
+  </div>
+<% end %>

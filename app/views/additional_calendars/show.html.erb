@@ -1,0 +1,59 @@
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.25rem;">
+      <%= calendar_color_swatch(@additional_calendar.color, size: "1.5rem") %>
+      <h2 style="margin-bottom: 0;"><%= @additional_calendar.name %></h2>
+    </div>
+    <p style="color: var(--pico-muted-color); margin-bottom: 0;">
+      <%= @additional_calendar.description.presence || "No description." %>
+    </p>
+  </div>
+  <div style="display: inline-flex; gap: 0.5rem;">
+    <%= link_to "Edit Calendar", edit_additional_calendar_path(@additional_calendar), role: "button", class: "secondary outline" %>
+    <%= link_to "+ Add Entry", new_additional_calendar_additional_calendar_entry_path(@additional_calendar), role: "button" %>
+  </div>
+</div>
+
+<p style="margin-bottom: 1.5rem;">
+  <%= link_to "‹ All calendars", additional_calendars_path, style: "font-size: 0.875rem;" %>
+</p>
+
+<% if @additional_calendar_entries.empty? %>
+  <article style="text-align: center; padding: 3rem 1rem;">
+    <h3>No entries yet</h3>
+    <p>Add dates to this calendar to see them against your leave.</p>
+    <%= link_to "Add Entry", new_additional_calendar_additional_calendar_entry_path(@additional_calendar), role: "button" %>
+  </article>
+<% else %>
+  <div style="overflow-x: auto;">
+    <table role="grid">
+      <thead>
+        <tr>
+          <th>Entry</th>
+          <th>Start Date</th>
+          <th>End Date</th>
+          <th>Duration</th>
+          <th>Notes</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @additional_calendar_entries.each do |entry| %>
+          <tr>
+            <td><strong><%= entry.title %></strong></td>
+            <td><%= entry.start_date.strftime("%a, %-d %b %Y") %></td>
+            <td><%= entry.end_date.strftime("%a, %-d %b %Y") %></td>
+            <td><%= pluralize(entry.duration_in_days, "day") %></td>
+            <td><%= entry.notes.presence || "-" %></td>
+            <td style="text-align: right;">
+              <div style="display: inline-flex; gap: 0.5rem;">
+                <%= link_to "Edit", edit_additional_calendar_entry_path(entry), role: "button", class: "secondary outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+                <%= button_to "Delete", additional_calendar_entry_path(entry), method: :delete, data: { turbo_confirm: "Are you sure you want to remove #{entry.title}?" }, class: "contrast outline", style: "padding: 0.25rem 0.75rem; font-size: 0.875rem;" %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
