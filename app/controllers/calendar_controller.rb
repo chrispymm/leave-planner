@@ -1,22 +1,14 @@
 class CalendarController < ApplicationController
   def show
     @reset_leave_year_details = params[:reset_leave_year_details] == "1"
-    @layout = params[:layout] == "list" ? "list" : "grid"
-    @layout_params = @layout == "list" ? { layout: "list" } : {}
+    @layout = Current.user.calendar_layout
 
-    if params[:start_date].present?
-      begin
-        @start_date = Date.parse(params[:start_date]).beginning_of_year
-      rescue ArgumentError
-        @start_date = Date.current.beginning_of_year
-      end
-    else
-      @start_date = Date.current.beginning_of_year
-    end
+    @start_date = calendar_start_date_from(params[:start_date])
 
     @months = (0...12).map { |i| @start_date + i.months }
     @window_start = @start_date
-    @window_end = @start_date.end_of_year
+    @window_end = (@start_date + 11.months).end_of_month
+    @year_title = [ @window_start.year, @window_end.year ].uniq.join("–")
 
     @people = Current.account.people.order(:name)
     @allowance_ranges_by_person = @people.index_with do |person|

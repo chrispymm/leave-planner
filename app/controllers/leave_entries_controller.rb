@@ -3,8 +3,7 @@ class LeaveEntriesController < ApplicationController
 
   def modal
     @date = params[:date].present? ? Date.parse(params[:date]) : Date.current
-    @calendar_start_date = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
-    @layout = params[:layout] == "list" ? "list" : "grid"
+    @calendar_start_date = calendar_start_date_from(params[:calendar_start_date]).to_s
     @people = Current.account.people.order(:name)
 
     @existing_entries = LeaveEntry.where(person: @people, date: @date).includes(:person)
@@ -15,7 +14,7 @@ class LeaveEntriesController < ApplicationController
   def toggle
     person = Current.account.people.find(params[:person_id])
     date = Date.parse(params[:date])
-    calendar_start = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
+    calendar_start = params[:calendar_start_date]
 
     entry = LeaveEntry.find_by(person: person, date: date)
     if entry
@@ -25,8 +24,8 @@ class LeaveEntriesController < ApplicationController
     end
 
     respond_to do |format|
-      format.html { redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params) }
-      format.turbo_stream { redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params) }
+      format.html { redirect_to calendar_path_for(calendar_start) }
+      format.turbo_stream { redirect_to calendar_path_for(calendar_start) }
     end
   end
 
@@ -34,7 +33,7 @@ class LeaveEntriesController < ApplicationController
     person_ids = Array(params.dig(:leave_entry, :person_ids)).compact_blank
     people = Current.account.people.where(id: person_ids).order(:name).to_a
     if people.empty?
-      return redirect_to calendar_path(start_date: params[:calendar_start_date], **calendar_layout_params), alert: "Select at least one person."
+      return redirect_to calendar_path_for(params[:calendar_start_date]), alert: "Select at least one person."
     end
 
     title = params[:leave_entry][:title].presence
@@ -43,7 +42,7 @@ class LeaveEntriesController < ApplicationController
     half_day = params[:leave_entry][:half_day].presence || "none"
     custom_hours = params[:leave_entry][:custom_hours].presence
     notes = params[:leave_entry][:notes]
-    calendar_start = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
+    calendar_start = params[:calendar_start_date]
 
     if end_date < start_date
       end_date = start_date
@@ -64,26 +63,22 @@ class LeaveEntriesController < ApplicationController
       end
     end
 
-    redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params), notice: "Leave updated for #{people.map(&:name).to_sentence}."
+    redirect_to calendar_path_for(calendar_start), notice: "Leave updated for #{people.map(&:name).to_sentence}."
   end
 
   def update
-    calendar_start = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
+    calendar_start = params[:calendar_start_date]
     @leave_entry.update(leave_entry_params)
-    redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params), notice: "Leave updated."
+    redirect_to calendar_path_for(calendar_start), notice: "Leave updated."
   end
 
   def destroy
-    calendar_start = params[:calendar_start_date].presence || Date.current.beginning_of_month.to_s
+    calendar_start = params[:calendar_start_date]
     @leave_entry.destroy
-    redirect_to calendar_path(start_date: calendar_start, **calendar_layout_params), notice: "Leave entry removed."
+    redirect_to calendar_path_for(calendar_start), notice: "Leave entry removed."
   end
 
   private
-
-  def calendar_layout_params
-    params[:layout] == "list" ? { layout: "list" } : {}
-  end
 
   def set_leave_entry
     @leave_entry = LeaveEntry.where(person: Current.account.people).find(params[:id])

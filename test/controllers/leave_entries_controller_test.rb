@@ -41,14 +41,14 @@ class LeaveEntriesControllerTest < ActionDispatch::IntegrationTest
       }
     end
 
-    assert_redirected_to calendar_url(start_date: Date.current.beginning_of_month.to_s)
+    assert_redirected_to calendar_url
     assert_equal 5, @person.leave_entries.where(date: Date.new(2026, 8, 10)..Date.new(2026, 8, 14)).count
     assert_equal 5, @other_person.leave_entries.where(date: Date.new(2026, 8, 10)..Date.new(2026, 8, 14)).count
   end
 
   test "should update leave entry" do
     patch leave_entry_url(@leave_entry), params: { leave_entry: { half_day: "morning" } }
-    assert_redirected_to calendar_url(start_date: Date.current.beginning_of_month.to_s)
+    assert_redirected_to calendar_url
     assert_equal "morning", @leave_entry.reload.half_day
   end
 
@@ -57,6 +57,6 @@ class LeaveEntriesControllerTest < ActionDispatch::IntegrationTest
       delete leave_entry_url(@leave_entry)
     end
 
-    assert_redirected_to calendar_url(start_date: Date.current.beginning_of_month.to_s)
+    assert_redirected_to calendar_url
   end
 end

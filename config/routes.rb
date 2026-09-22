@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root "calendar#show"
 
   resource :calendar, only: [ :show ], controller: "calendar"
+  resource :calendar_layout, only: [ :update ]
   resource :account, only: [ :edit, :update ] do
     resources :invitations, only: [ :new, :create, :destroy ]
     resources :memberships, only: [ :destroy ]

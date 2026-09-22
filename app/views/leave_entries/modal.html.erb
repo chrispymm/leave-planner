@@ -28,7 +28,7 @@
                     <% end %>
                   </span>
                 </div>
-                <%= button_to "Remove", leave_entry_path(entry, calendar_start_date: @calendar_start_date, layout: @layout), method: :delete, data: { turbo_frame: "_top" }, class: "contrast outline", style: "padding: 0.15rem 0.5rem; font-size: 0.75rem; margin: 0;" %>
+                <%= button_to "Remove", leave_entry_path(entry, calendar_start_date: @calendar_start_date), method: :delete, data: { turbo_frame: "_top" }, class: "contrast outline", style: "padding: 0.15rem 0.5rem; font-size: 0.75rem; margin: 0;" %>
               </div>
             <% end %>
           </div>
@@ -38,7 +38,6 @@
       <!-- Book / Edit Leave Form -->
       <%= form_with(url: leave_entries_path, method: :post, data: { turbo_frame: "_top", controller: "date-range" }) do |f| %>
         <%= hidden_field_tag :calendar_start_date, @calendar_start_date %>
-        <%= hidden_field_tag :layout, @layout %>
 
         <fieldset style="margin-bottom: 1rem;">
           <legend>People</legend>

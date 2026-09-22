@@ -1,0 +1,27 @@
+<header class="app-header">
+  <div class="app-header-inner">
+    <%= link_to Current.account&.name || "Annual Leave Planner", root_path, class: "app-header-brand" %>
+
+    <div class="app-header-user" data-controller="dropdown">
+      <button type="button"
+              class="app-header-user-button"
+              data-dropdown-target="button"
+              data-action="dropdown#toggle"
+              aria-haspopup="true"
+              aria-expanded="false">
+        <span class="app-header-user-name"><%= Current.user.email_address %></span>
+        <span class="app-header-user-caret" aria-hidden="true">▾</span>
+      </button>
+
+      <div class="app-header-menu" data-dropdown-target="menu" role="menu" hidden>
+        <%= link_to "Edit profile", edit_profile_path, class: "app-header-menu-item", role: "menuitem", data: { turbo_frame: "_top" } %>
+        <%= link_to "Account settings", edit_account_path, class: "app-header-menu-item", role: "menuitem", data: { turbo_frame: "_top" } %>
+        <%= button_to "Sign out", session_path,
+              method: :delete,
+              form: { class: "app-header-menu-form", data: { turbo_frame: "_top" } },
+              class: "app-header-menu-item app-header-menu-item-danger",
+              role: "menuitem" %>
+      </div>
+    </div>
+  </div>
+</header>

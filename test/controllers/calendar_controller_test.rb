@@ -17,34 +17,64 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
       assert_select "header.site-nav", count: 0
       assert_select "turbo-frame#calendar_frame"
-      assert_select ".calendar-year-title", text: "2026"
+      assert_select ".calendar-year-title", text: "2026–2027"
       assert_select ".month-card", count: 12
-      assert_select ".month-card.past-month", count: 8
+      assert_select ".month-card .month-header", text: "August"
+      assert_select ".month-card .month-header", text: "July"
+      assert_select ".month-card.past-month", count: 1
       assert_select ".month-card.current-month", count: 1
       assert_select ".month-card.current-month .month-header", text: "September"
+      assert_select "a[aria-label='Previous year'][href='#{calendar_path(start_date: "2025-08-01", reset_leave_year_details: 1)}']"
+      assert_select "a[aria-label='Next year'][href='#{calendar_path(start_date: "2027-08-01", reset_leave_year_details: 1)}']"
+      assert_select ".calendar-layout-toggle form", count: 2
+      assert_select ".calendar-layout-toggle button[aria-pressed='true']", text: "Grid"
+      assert_select ".calendar-layout-toggle button[aria-pressed='false']", text: "List"
       assert_select ".calendar-controls", text: /Selected Person:/, count: 0
       assert_select "a[href*='person_id=']", count: 0
+      assert_select "a[href*='layout=']", count: 0
     end
   end
 
-  test "should navigate to the whole year containing start_date" do
+  test "should navigate to a 12 month window beginning with start_date's month" do
     get calendar_url(start_date: "2027-06-15")
     assert_response :success
-    assert_select ".calendar-year-title", text: "2027"
-    assert_select ".month-card .month-header", text: "January"
-    assert_select ".month-card .month-header", text: "December"
-    assert_select "a[aria-label='Previous year'][href='#{calendar_path(start_date: "2026-01-01", reset_leave_year_details: 1)}']"
-    assert_select "a[aria-label='Next year'][href='#{calendar_path(start_date: "2028-01-01", reset_leave_year_details: 1)}']"
+    assert_select ".calendar-year-title", text: "2027–2028"
+    assert_select ".month-card .month-header", text: "June"
+    assert_select ".month-card .month-header", text: "May"
+    assert_select "a[aria-label='Previous year'][href='#{calendar_path(start_date: "2026-06-01", reset_leave_year_details: 1)}']"
+    assert_select "a[aria-label='Next year'][href='#{calendar_path(start_date: "2028-06-01", reset_leave_year_details: 1)}']"
   end
 
-  test "should render alternate list layout via layout=list query param" do
-    get calendar_url(start_date: "2026-01-01", layout: "list")
+  test "should render the same default rolling window in the alternate list layout" do
+    users(:chris).update!(calendar_layout: "list")
+
+    travel_to Date.new(2026, 9, 16) do
+      get calendar_url
+      assert_response :success
+      assert_select ".calendar-list-12"
+      assert_select ".month-list-row", count: 12
+      assert_select ".calendar-year-title", text: "2026–2027"
+      assert_select ".month-list-row:first-child .month-list-label", text: "Aug"
+      assert_select ".month-list-row:last-child .month-list-label", text: "Jul"
+      assert_select ".month-card", count: 0
+      assert_select ".calendar-grid-12", count: 0
+      assert_select "a[aria-label='Previous year'][href='#{calendar_path(start_date: "2025-08-01", reset_leave_year_details: 1)}']"
+      assert_select "a[aria-label='Next year'][href='#{calendar_path(start_date: "2027-08-01", reset_leave_year_details: 1)}']"
+      assert_select ".calendar-layout-toggle button[aria-pressed='true']", text: "List"
+      assert_select ".calendar-layout-toggle button[aria-pressed='false']", text: "Grid"
+      assert_select "a[href*='layout=']", count: 0
+    end
+  end
+
+  test "ignores the former layout query parameter" do
+    users(:chris).update!(calendar_layout: "grid")
+
+    get calendar_url(layout: "list")
+
     assert_response :success
-    assert_select ".calendar-list-12"
-    assert_select ".month-list-row", count: 12
-    assert_select ".month-card", count: 0
-    assert_select ".calendar-grid-12", count: 0
-    assert_select "a[aria-label='Previous year'][href*='layout=list']"
+    assert_select ".calendar-grid-12"
+    assert_select ".calendar-list-12", count: 0
+    assert_equal "grid", users(:chris).reload.calendar_layout
   end
 
   test "should show an initial balance in its current leave year only" do

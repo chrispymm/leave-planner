@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  CALENDAR_LAYOUTS = %w[grid list].freeze
+
   has_secure_password
   has_many :sessions, dependent: :destroy
   has_many :memberships, dependent: :destroy
@@ -6,6 +8,8 @@ class User < ApplicationRecord
   has_many :owned_accounts, class_name: "Account", foreign_key: :owner_id, dependent: :restrict_with_error
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
+
+  validates :calendar_layout, inclusion: { in: CALENDAR_LAYOUTS }
 
   # For now each user belongs to exactly one account (assigned at seed/creation
   # time). If multi-account support is needed later, replace this with an

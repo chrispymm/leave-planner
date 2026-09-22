@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_18_152248) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_21_223146) do
   create_table "accounts", force: :cascade do |t|
     t.string "bank_holiday_division", default: "england-and-wales", null: false
     t.datetime "created_at", null: false
@@ -110,6 +110,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_18_152248) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "calendar_layout", default: "grid", null: false
     t.datetime "created_at", null: false
     t.string "email_address", null: false
     t.string "password_digest", null: false

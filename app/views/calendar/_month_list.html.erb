@@ -25,7 +25,7 @@
         classes << "school-holiday" if school_holidays.present?
       %>
 
-      <%= link_to modal_leave_entries_path(date: date.to_s, calendar_start_date: @start_date.to_s, **@layout_params), data: { turbo_frame: "modal_frame" }, class: classes.join(" "), title: [date.strftime("%a %-d %b"), bank_holiday&.title, school_holidays&.map(&:title)&.join(", ")].compact.join(" • ") do %>
+      <%= link_to modal_leave_entries_path(date: date.to_s, calendar_start_date: @start_date.to_s), data: { turbo_frame: "modal_frame" }, class: classes.join(" "), title: [date.strftime("%a %-d %b"), bank_holiday&.title, school_holidays&.map(&:title)&.join(", ")].compact.join(" • ") do %>
         <%= render "calendar/day_cell_content", date: date, is_today: is_today, entries: entries %>
       <% end %>
     <% end %>

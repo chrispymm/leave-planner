@@ -20,6 +20,10 @@
   </head>
 
   <body>
+    <% if authenticated? %>
+      <%= render "layouts/header" %>
+    <% end %>
+
     <main class="<%= controller_name == 'calendar' ? 'container-fluid' : 'container' %>" style="<%= controller_name == 'calendar' ? 'padding: 1.25rem 1.5rem 1.5rem;' : 'padding: 1.5rem 1rem 2.5rem;' %>">
       <% if controller_name != "calendar" && !%w[sessions passwords invitation_acceptances].include?(controller_name) %>
         <nav style="margin-bottom: 1.5rem;">
