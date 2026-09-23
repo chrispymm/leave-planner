@@ -51,6 +51,16 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Deployment via Capistrano [https://github.com/capistrano/capistrano]
+  gem "capistrano", "~> 3.19", require: false
+  gem "capistrano-rails", "~> 1.7", require: false
+  gem "capistrano-rbenv", "~> 2.2", require: false
+  gem "capistrano3-puma", "~> 8.0", require: false
+  # net-ssh (a Capistrano dependency) needs these to authenticate with an
+  # ed25519 SSH key, which is what this deploy's server access uses.
+  gem "ed25519", "~> 1.4", require: false
+  gem "bcrypt_pbkdf", "~> 1.1", require: false
 end
 
 group :test do

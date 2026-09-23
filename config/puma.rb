@@ -29,7 +29,10 @@ threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
 # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port ENV.fetch("PORT", 3000)
+# Bound to loopback only (rather than Puma's default 0.0.0.0) since this app
+# always sits behind a reverse proxy (nginx in production) - the app port
+# itself must never be reachable directly from outside the host.
+bind "tcp://127.0.0.1:#{ENV.fetch('PORT', 3000)}"
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
