@@ -132,7 +132,7 @@ class CalendarControllerTest < ActionDispatch::IntegrationTest
       assert_select "a[href='#{person_leave_ranges_path(person)}'][data-turbo-frame='_top']", text: person.name
     end
 
-    assert_select "a[href='#{additional_calendars_path}'][data-turbo-frame='_top']"
+    assert_select "a[href='#{new_additional_calendar_path}'][data-turbo-frame='_top']"
     assert_select "a[href='#{additional_calendar_path(additional_calendars(:school_holidays))}'][data-turbo-frame='_top']"
     assert_select "a[href='#{bank_holidays_path}'][data-turbo-frame='_top']"
   end

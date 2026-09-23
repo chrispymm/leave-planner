@@ -36,6 +36,11 @@
 !/app/assets/builds/.keep
 /public/assets
 
+# Ignore locally installed gems (BUNDLE_PATH points here on the dev machine).
+# These are native macOS builds and must never reach the Linux image; the
+# Dockerfile runs its own `bundle install` into /usr/local/bundle.
+/vendor/bundle
+
 # Ignore CI service files.
 /.github
 

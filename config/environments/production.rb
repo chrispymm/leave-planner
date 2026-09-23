@@ -58,9 +58,15 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: "example.com" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "leave.chrispymm.co.uk"), protocol: "https" }
 
-  # Specify outgoing SMTP server. Remember to add smtp/* credentials via bin/rails credentials:edit.
+  # SMTP is not configured yet, so password-reset emails are enqueued but never
+  # delivered. Reset passwords via `bin/rails console` until this is filled in.
+  # Invitations are unaffected — they surface a shareable link on screen.
+  #
+  # To enable delivery: add smtp/* credentials via bin/rails credentials:edit
+  # and uncomment the block below.
+  # config.action_mailer.delivery_method = :smtp
   # config.action_mailer.smtp_settings = {
   #   user_name: Rails.application.credentials.dig(:smtp, :user_name),
   #   password: Rails.application.credentials.dig(:smtp, :password),
@@ -80,11 +86,9 @@ Rails.application.configure do
   config.active_record.attributes_for_inspect = [ :id ]
 
   # Enable DNS rebinding protection and other `Host` header attacks.
-  # config.hosts = [
-  #   "example.com",     # Allow requests from example.com
-  #   /.*\.example\.com/ # Allow requests from subdomains like `www.example.com`
-  # ]
-  #
-  # Skip DNS rebinding protection for the default health check endpoint.
-  # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.hosts = [ ENV.fetch("APP_HOST", "leave.chrispymm.co.uk") ]
+
+  # Skip DNS rebinding protection for the default health check endpoint, which
+  # the proxy hits directly by container IP rather than by hostname.
+  config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 end
