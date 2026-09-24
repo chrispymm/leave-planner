@@ -91,11 +91,12 @@ systemctl reload nginx
 
 echo
 echo "Bootstrap complete. Next steps (as ${DEPLOY_USER}, no sudo needed):"
-echo "  1. From your local machine: bundle exec cap production deploy"
-echo "     (this installs rbenv + Ruby ${RUBY_VERSION:-4.0.7}, bundles gems, and"
-echo "     installs a 'systemctl --user' unit for Puma - first run will be"
-echo "     slow, mostly the Ruby compile)."
-echo "  2. Once the app responds on the Unix socket, get a TLS certificate:"
-echo "       sudo certbot --nginx -d ${DOMAIN}"
+echo "  1. Install rbenv + Ruby ${RUBY_VERSION:-4.0.7} as ${DEPLOY_USER}, then"
+echo "     run this from your local machine: bundle exec cap production deploy"
+echo "  2. Install and start Puma's user-level systemd unit once:"
+echo "       bundle exec cap production puma:install"
+echo "       bundle exec cap production puma:start"
+echo "  3. Once public DNS points here, get a TLS certificate:"
+echo "       sudo certbot --nginx -d ${DOMAIN} --redirect"
 echo "     (safe to run any time after nginx is serving the vhost; only"
 echo "     touches the ${DOMAIN} server block, not the other vhosts)"

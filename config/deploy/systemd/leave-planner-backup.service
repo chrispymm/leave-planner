@@ -1,0 +1,7 @@
+[Unit]
+Description=Back up Annual Leave Planner SQLite databases
+
+[Service]
+Type=oneshot
+ExecStart=/var/www/leave-planner/current/bin/deploy/backup_databases.sh
+

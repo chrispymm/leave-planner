@@ -1,0 +1,11 @@
+[Unit]
+Description=Nightly Annual Leave Planner database backup
+
+[Timer]
+OnCalendar=*-*-* 03:15:00
+Persistent=true
+RandomizedDelaySec=30m
+Unit=leave-planner-backup.service
+
+[Install]
+WantedBy=timers.target
